@@ -2,1083 +2,1018 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>للذاكرين والذاكرات OLA</title>
+<title>محفظة OLA الرقمية</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<!-- استدعاء الخطوط بطريقة آمنة وسريعة لمنع اختفاء النص -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
-  :root {
-    --bg-top: #e8f5e9; 
-    --bg-bottom: #ffffff;
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --text-main: #1b5e20; 
-    --gold: #d4af37;
-    --gold-light: #fef0c1;
-    --accent: #4caf50;
-    --danger: #e53935;
-    --shadow: 0 8px 32px rgba(27, 94, 32, 0.1);
+  :root { 
+    --bg: #07224e; 
+    --bg2: #0a2e6d; 
+    --card: #0e3d94; 
+    --card-inner: rgba(0, 0, 0, 0.28);
+    --ink: #f1f5ff; 
+    --muted: #9bb7e8; 
+    --brand: #d4af37; 
+    --ok: #22c55e; 
+    --danger: #ef4444; 
+    --line: rgba(212, 175, 55, 0.25); 
+    --warn: #f59e0b;
   }
-
   * { box-sizing: border-box; }
-  
-  body { 
-    margin: 0; 
-    font-family: 'Tajawal', Arial, system-ui, Tahoma, sans-serif;
-    background: linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
-    background-attachment: fixed;
-    color: var(--text-main); 
-    padding-bottom: 80px;
-  }
-  
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
-    opacity: 0.05;
-    z-index: -1;
-  }
-
-  .wrap { max-width: 800px; margin: 24px auto; padding: 12px; }
-  
-  .card { 
-    background: var(--card-bg); 
-    border: 1px solid var(--gold); 
-    border-radius: 20px; 
-    padding: 24px; 
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
-  }
-
-  h2, h3 { color: var(--text-main); font-family: 'Amiri', 'Times New Roman', serif; margin-top: 0; }
-  
-  button { 
-    width: 100%; padding: 14px; border-radius: 12px; 
-    border: 1px solid var(--gold); background: var(--gold); 
-    color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; 
-    font-family: 'Tajawal', Arial, sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  }
-  button:active { transform: scale(0.97); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  button.outline { background: transparent; color: var(--gold); border-color: var(--gold); text-shadow: none; }
-  button.danger { background: transparent; color: var(--danger); border-color: var(--danger); text-shadow: none;}
-  
-  .dhikr-btn { 
-    background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.5); color: var(--text-main); 
-    text-align: right; display: flex; justify-content: space-between; align-items: center; 
-    margin-bottom: 12px; padding: 16px; font-size: 18px; line-height: 1.6; 
-    border-radius: 16px; font-family: 'Amiri', 'Times New Roman', serif; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    transition: 0.2s;
-  }
-  .dhikr-btn:active { background: var(--gold-light); border-color: var(--gold); }
-  
-  .counter-badge { 
-    background: var(--gold); color: #fff; padding: 6px 14px; border-radius: 12px; 
-    font-weight: bold; font-size: 18px; font-family: Tahoma, sans-serif;
-    direction: ltr; display: inline-block;
-  }
-  
+  body { margin: 0; font-family: system-ui, -apple-system, Tahoma, sans-serif; background: linear-gradient(135deg, var(--bg), var(--bg2)); color: var(--ink); padding: 15px; min-height: 100vh;}
+  .wrap { max-width: 580px; margin: 0 auto; }
+  .card { background: rgba(255,255,255,.05); border: 1px solid var(--line); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
   .hidden { display: none !important; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  input, select, button { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: var(--ink); font-size: 15px; margin-bottom: 10px; outline: none; transition: 0.2s ease;}
+  input:focus, select:focus { border-color: var(--brand); background: rgba(0,0,0,0.3); box-shadow: 0 0 10px rgba(212,175,55,0.2); }
+  select option { background: var(--bg2); color: white; }
+  button { background: var(--brand); color: #07224e; font-weight: bold; cursor: pointer; border: none; }
+  button:active { transform: scale(0.98); }
+  button.danger { background: var(--danger); border-color: var(--danger); color: white; margin-top: 10px;}
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--brand); }
+  .banner { padding:12px; border-radius:12px; border:1px solid var(--warn); background:rgba(0,0,0,0.25); margin-bottom:10px; }
+  .balance-box { display: flex; gap: 10px; margin-bottom: 15px; }
+  .balance-card { flex: 1; text-align: center; padding: 15px 10px; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid var(--line); }
+  .balance-amount { font-size: 20px; font-weight: 800; color: var(--brand); margin-top: 6px; direction: ltr;}
+  .balance-amount.usdt { color: var(--ok); }
+  .nav-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 4px; }
+  .nav-tabs button { margin: 0; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid transparent; white-space: nowrap; font-size: 14px;}
+  .nav-tabs button.active { background: var(--brand); color: #07224e; font-weight: bold; border-color: var(--brand); }
   
-  .oath-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255,255,255,0.95); z-index: 1000;
-    display: flex; justify-content: center; align-items: center; padding: 20px;
-  }
-  .oath-box {
-    background: #fff; border: 2px solid var(--gold); border-radius: 24px;
-    padding: 30px; text-align: center; max-width: 500px; box-shadow: 0 20px 50px rgba(27, 94, 32, 0.2);
-  }
+  .input-group { position: relative; width: 100%; margin-bottom: 10px; }
+  .input-group input { margin-bottom: 0; padding-left: 70px; } 
+  .btn-max { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); background: var(--brand); color: #07224e; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; width: auto; margin-bottom: 0; z-index: 5;}
+  
+  .coin-list-item { background: var(--card-inner); border: 1px solid var(--line); padding: 12px 15px; border-radius: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+  .coin-list-item:hover { border-color: var(--brand); transform: translateY(-2px); }
+  .coin-list-info { display: flex; align-items: center; gap: 12px; }
+  .coin-logo { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--brand); background: rgba(0,0,0,0.2); }
+  .coin-list-info h4 { margin: 0 0 4px 0; color: #fff; font-size: 15px;}
+  .coin-list-info p { margin: 0; font-size: 13px; color: var(--muted); direction: ltr; text-align: right;}
 
-  .bottom-nav { 
-    position: fixed; bottom: 0; left: 0; width: 100%; 
-    background: #ffffff; border-top: 1px solid var(--gold-light); 
-    display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; 
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-  }
-  .nav-item { 
-    color: #81c784; background: transparent; border: none; padding: 6px; 
-    width: auto; font-size: 14px; flex: 1; text-align: center; text-shadow: none;
-  }
-  .nav-item.active { color: var(--text-main); font-weight: bold; border-bottom: 3px solid var(--gold); border-radius:0; }
+  /* بطاقات السوق */
+  .market-base-control { background: rgba(0,0,0,0.3); border: 1px solid var(--line); border-radius: 14px; padding: 12px 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .market-base-control label { font-size: 13px; color: var(--muted); white-space: nowrap; }
   
-  .rank-item, .session-item { 
-    display: flex; justify-content: space-between; padding: 16px; 
-    border-bottom: 1px dashed rgba(212, 175, 55, 0.3); align-items: center;
-    border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.5);
-  }
-  .rank-item.is-me { background: rgba(76, 175, 80, 0.15); border: 1px solid var(--accent); }
-  .rank-num { font-size: 22px; font-weight: bold; color: var(--gold); width: 30px; text-align: center; direction: ltr; font-family: Tahoma, sans-serif; }
+  .pro-market-card { background: var(--card-inner); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s, border-color 0.2s; }
+  .pro-market-card:hover { border-color: var(--brand); transform: translateY(-2px); }
+  .pro-market-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; }
+  .pro-market-bottom { display: flex; flex-direction: column; gap: 4px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 10px; font-size: 12px; color: var(--muted); direction: ltr; text-align: left; }
   
-  input, select {
-    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); 
-    background: #fff; color: var(--text-main); margin-bottom: 15px; font-size: 16px; font-family: 'Tajawal', Arial, sans-serif;
-  }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; display: inline-block;}
+  .badge.fixed { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);}
+  .badge.var { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);}
   
-  .ramadan-banner {
-    background: linear-gradient(45deg, var(--gold), #e8c456); color: #07224e;
-    padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: center;
-    font-weight: bold; font-size: 16px; line-height: 1.6; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-  }
-  
-  .en-num { direction: ltr; display: inline-block; font-family: Tahoma, sans-serif; }
+  .price-main { font-size: 17px; font-weight: 800; direction: ltr; text-align: left; display: flex; align-items: center; gap: 4px; }
+  .price-up { color: #4ade80 !important; }
+  .price-down { color: #f87171 !important; }
 
-  .quran-verse {
-      text-align: center; margin-bottom: 20px; font-family: 'Amiri', 'Times New Roman', serif;
-      background: var(--card-bg); padding: 20px 15px; border-radius: 16px;
-      border: 1px dashed var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  }
+  .trend-up { color: #4ade80; font-size: 14px; }
+  .trend-down { color: #f87171; font-size: 14px; }
+  .trend-flat { color: var(--muted); font-size: 14px; opacity: 0.5; }
 
-  .logo-header {
-      text-align: center; margin-bottom: 20px;
-  }
-  .logo-header img {
-      max-width: 140px; border-radius: 12px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-  }
+  /* المودال العام */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(7, 34, 78, 0.9); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
+  .receipt-card { background: var(--card); border: 2px solid var(--brand); border-radius: 18px; padding: 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  .receipt-icon { font-size: 45px; margin-bottom: 5px; }
+  .receipt-title { color: var(--brand); font-size: 22px; font-weight: bold; margin-bottom: 15px; }
   
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
-  .banner-sec { background: var(--bg-top); border: 1px dashed var(--gold); padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: right; }
-  @media (max-width: 500px) { .grid2 { grid-template-columns: 1fr; } }
+  .info-box { background: rgba(0,0,0,0.25); border: 1px solid var(--line); padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; text-align: right; }
+  .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; border-bottom: 1px dashed var(--line); padding-bottom: 6px; align-items: center;}
+  .info-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+  .info-label { color: var(--muted); }
+  .info-value { font-weight: bold; color: var(--ink); text-align: left; }
+
+  .swap-container { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--line); }
+  .swap-rate { text-align: center; font-size: 13px; color: var(--warn); margin-bottom: 10px; padding: 6px; background: rgba(255,255,255,0.05); border-radius: 8px; direction: ltr;}
+
+  .main-logo { width: 80px; height: 80px; display: block; margin: 0 auto 10px auto; border-radius: 50%; object-fit: cover; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+  .inline-logo { width: 20px; height: 20px; vertical-align: middle; margin-left: 6px; border-radius: 50%; object-fit: cover; }
+
+  .custom-select { position: relative; width: 100%; margin-bottom: 10px; user-select: none; }
+  .custom-select-trigger { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.08); color: var(--ink); cursor: pointer; transition: 0.2s; }
+  .custom-select-trigger:hover { background: rgba(0,0,0,0.3); border-color: var(--brand); box-shadow: 0 0 10px rgba(212,175,55,0.2); }
+  .custom-select-trigger img { width: 24px; height: 24px; border-radius: 50%; margin-left: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); }
+  .custom-select-options { position: absolute; top: calc(100% + 5px); left: 0; right: 0; z-index: 100; background: var(--bg2); border: 1px solid var(--brand); border-radius: 12px; max-height: 220px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; }
+  .custom-select-options.show { display: flex; }
+  .custom-select-options::-webkit-scrollbar { width: 6px; }
+  .custom-select-options::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+  .custom-select-options::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 10px; }
+  .custom-option { display: flex; align-items: center; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
+  .custom-option:last-child { border-bottom: none; }
+  .custom-option:hover { background: rgba(212,175,55,0.15); padding-right: 20px; }
+  .custom-option img { width: 24px; height: 24px; border-radius: 50%; margin-left: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); }
+  .arrow-icon { font-size: 12px; color: var(--muted); }
+  
+  .market-base-control .custom-select { width: auto; flex: 1; max-width: 190px; margin-bottom: 0; }
+  .market-base-control .custom-select-trigger { padding: 8px 10px; font-size: 13px; font-weight: bold; border-color: var(--brand); background: rgba(0,0,0,0.3); }
+  .market-base-control .custom-select-trigger img { width: 20px; height: 20px; margin-left: 6px; }
+  .market-base-control .custom-option { padding: 10px; font-size: 13px; }
+  .market-base-control .custom-option img { width: 20px; height: 20px; margin-left: 6px; }
 </style>
 </head>
 <body>
-
-<!-- شاشة تسجيل الدخول -->
-<div id="login-screen" class="wrap hidden" style="text-align:center; padding-top: 50px;">
-    <div class="card" style="max-width: 400px; margin: auto;">
-        <div class="logo-header">
-            <img src="https://i.ibb.co/j0WTgHT/IMG-20260624-WA0005-10.jpg" alt="OLA Logo">
-        </div>
-        <h3 style="color:var(--gold); font-size:28px; margin-bottom: 10px;">تسجيل الدخول</h3>
-        <p style="margin-bottom:25px; color:var(--text-main); font-size: 16px;">الرجاء إدخال رقم الحساب وكلمة المرور للبدء</p>
-        <input type="text" id="login-ola-id" placeholder="مثال: OLA 471264597-201" style="text-align:center; direction:ltr; font-weight:bold; letter-spacing: 1px;">
-        <input type="password" id="login-password" placeholder="كلمة المرور" style="text-align:center; direction:ltr; font-weight:bold; letter-spacing: 1px;">
-        
-        <button id="btn-login" onclick="loginUser()" style="margin-top: 10px; font-size: 18px;">تسجيل الدخول</button>
-        <button id="btn-go-register" class="outline" onclick="showRegisterScreen()" style="margin-top: 15px; font-size: 16px;">إنشاء حساب جديد</button>
-    </div>
-</div>
-
-<!-- شاشة إنشاء حساب جديد -->
-<div id="register-screen" class="wrap hidden" style="text-align:center; padding-top: 20px;">
-    <div class="card" style="max-width: 600px; margin: auto; text-align: right;">
-        <div class="logo-header" style="text-align:center;">
-            <img src="https://i.ibb.co/j0WTgHT/IMG-20260624-WA0005-10.jpg" alt="OLA Logo" style="max-width: 100px;">
-        </div>
-        <h3 style="color:var(--gold); font-size:26px; margin-bottom: 15px; text-align:center;">إنشاء حساب جديد</h3>
-        
-        <div class="grid2">
-            <input id="reg-name" placeholder="الاسم الكامل"/>
-            <input id="reg-dob" placeholder="تاريخ الميلاد (مثال 1/1/2000)"/>
-            <input id="reg-country" placeholder="البلد"/>
-            <input id="reg-city" placeholder="المدينة"/>
-            <input id="reg-job" placeholder="المهنة"/>
-            <select id="reg-gender">
-                <option value="" disabled selected>اختر الجنس</option>
-                <option value="male">ذكر</option>
-                <option value="female">أنثى</option>
-            </select>
-            <input id="reg-pass" type="password" placeholder="قم بإنشاء كلمة سر قوية"/>
-            <input id="reg-pass-confirm" type="password" placeholder="تأكيد كلمة السر"/>
-        </div>
-
-        <div class="banner-sec">
-            <h4 style="margin:0 0 8px 0; color:var(--text-main);">سؤال الأمان الإلزامي</h4>
-            <div style="font-size: 13px; margin-bottom:8px; color:#555;">سيفيدك هذا السؤال في استعادة الحساب لاحقاً.</div>
-            <div style="font-weight:bold; margin-bottom:8px; color:var(--danger); font-size:16px;" id="reg-sec-q">جاري توليد سؤال أمان...</div>
-            <input id="reg-sec-a" placeholder="أدخل إجابتك هنا بوضوح" style="margin-bottom:0;">
-        </div>
-
-        <div class="grid2" style="margin-top:15px;">
-            <button id="btn-register-submit" onclick="registerNewUser()">إنشاء الحساب</button>
-            <button class="outline danger" onclick="hideRegisterScreen()">إلغاء والعودة</button>
-        </div>
-        <div id="reg-status" style="margin-top:10px; font-weight:bold; font-size:14px; text-align:center;"></div>
-    </div>
-</div>
-
-<div id="user-info-modal" class="oath-overlay hidden" style="z-index: 1001;">
-    <div class="oath-box" style="position:relative; width: 90%; max-width: 400px; padding: 30px 20px;">
-        <button onclick="closeUserModal()" style="position:absolute; top:15px; left:15px; background:var(--danger); color:white; border:none; border-radius:50%; width:30px; height:30px; font-weight:bold; cursor:pointer;">X</button>
-        <img id="um-avatar" src="" style="width:90px; height:90px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <h3 id="um-name" style="margin:0 0 5px 0; color:var(--text-main);">—</h3>
-        <div id="um-ola" class="en-num" style="color:var(--gold); font-size:16px; margin-bottom:20px; font-weight:bold;">—</div>
-        
-        <div style="background:var(--bg-top); padding:15px; border-radius:12px; margin-bottom:20px; border:1px dashed var(--gold);">
-            <div style="font-size:14px; color:var(--text-main); margin-bottom:5px;">إجمالي تسبيحات الترتيب العام</div>
-            <div id="um-total" class="en-num" style="color:var(--accent); font-size:24px; font-weight:bold;">0</div>
-        </div>
-        
-        <button id="btn-toggle-follow" onclick="toggleFollow()">متابعة 🤝</button>
-    </div>
-</div>
-
-<!-- المحتوى الرئيسي -->
-<div class="wrap hidden" id="app-content">
-  <div class="logo-header">
-      <img src="https://i.ibb.co/j0WTgHT/IMG-20260624-WA0005-10.jpg" alt="OLA Logo">
-  </div>
-  
-  <!-- صفحة الورد -->
-  <div id="view-dhikr" class="view">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 10px;">
-        <h3 style="margin:0; font-size:24px;">للذاكرين والذاكرات OLA</h3>
-        <span id="sync-status" style="font-size:14px; color:var(--accent); font-weight:bold;">متزامن ✅</span>
-    </div>
-    
-    <div class="quran-verse">
-        <div style="color: var(--gold); margin-bottom: 12px; font-size: 18px;">بسم الله الرحمن الرحيم</div>
-        <div style="color: var(--text-main); font-size: 24px; line-height: 1.8;">﴿وَالذَّاكِرِينَ اللَّهَ كَثِيرًا وَالذَّاكِرَاتِ أَعَدَّ اللَّهُ لَهُم مَّغْفِرَةً وَأَجْرًا عَظِيمًا﴾</div>
-        <div style="color: var(--gold); margin-top: 12px; font-size: 16px;">صدق الله العظيم</div>
-    </div>
-    
-    <div id="normal-dhikr-list"></div>
-    <div id="friday-mode" class="hidden"></div>
+<div class="wrap">
+  <!-- تسجيل الدخول -->
+  <div id="login-view" class="card">
+    <img src="https://i.ibb.co/PZzRT8sX/4115316-ico.png" alt="OLA Logo" class="main-logo">
+    <h2 style="color:var(--brand); text-align:center; margin-top:0;">محفظة OLA الرقمية</h2>
+    <input id="login-ola" placeholder="رقم حساب OLA" dir="ltr" style="text-align:right;">
+    <input id="login-pass" type="password" placeholder="كلمة السر">
+    <button id="btn-login">تسجيل الدخول</button>
+    <button id="btn-go-register" class="ghost" style="margin-top:5px;">إنشاء حساب جديد</button>
+    <div id="login-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
   </div>
 
-  <!-- صفحة المجالس -->
-  <div id="view-sessions" class="view hidden card">
-    <h3 style="text-align:center;">مجالس النور</h3>
-    <p style="text-align:center; font-size:14px; margin-top:0;">(صدقة جارية لمن تحب، وتُحسب من ضمن الترتيب العالمي للذاكرين)</p>
+  <!-- إنشاء الحساب -->
+  <div id="register-view" class="card hidden">
+    <h3 style="color:var(--brand); margin-top:0;">إنشاء حساب جديد</h3>
+    <div class="grid2">
+      <input id="in-name" placeholder="الاسم الكامل"/>
+      <input id="in-dob" placeholder="تاريخ الميلاد"/>
+      <input id="in-country" placeholder="البلد"/>
+      <input id="in-city" placeholder="المدينة"/>
+      <input id="in-job" placeholder="المهنة"/>
+      <select id="in-gender">
+        <option value="">اختر الجنس</option>
+        <option value="male">ذكر</option>
+        <option value="female">أنثى</option>
+      </select>
+      <input id="in-pass" type="password" placeholder="كلمة السر"/>
+      <input id="in-pass-confirm" type="password" placeholder="تأكيد كلمة السر"/>
+    </div>
     
-    <button id="btn-show-create-session" style="margin-bottom:20px;">+ إنشاء مجلس ذكر مخصص</button>
+    <div class="banner">
+      <h4 style="margin:0 0 6px 0; color:var(--warn); font-size:14px;">سؤال الأمان الإلزامي</h4>
+      <div style="font-weight:bold; margin-bottom:8px; font-size:14px;" id="lbl-sec-q">جاري التوليد...</div>
+      <input id="in-sec-a" placeholder="أدخل إجابتك هنا" style="background:rgba(0,0,0,0.5);">
+    </div>
+
+    <button id="btn-register">إنشاء الحساب والمحفظة</button>
+    <button id="btn-cancel-register" class="ghost danger">رجوع</button>
+    <div id="reg-status" style="margin-top:8px; text-align:center; font-weight:bold; color:var(--warn);"></div>
+  </div>
+
+  <!-- الواجهة الرئيسية للمحفظة -->
+  <div id="wallet-view" class="hidden">
+    <img src="https://i.ibb.co/PZzRT8sX/4115316-ico.png" alt="OLA Logo" class="main-logo" style="width: 60px; height: 60px;">
+    <div style="text-align:center; color:var(--muted); margin-bottom:15px; font-weight:600;" id="wallet-id" dir="ltr"></div>
     
-    <div id="create-session-form" class="hidden" style="background:var(--bg-top); padding:15px; border-radius:16px; margin-bottom:20px; border:1px solid var(--gold);">
-        <h4 style="margin-top:0;">إنشاء مجلس جديد</h4>
-        <input type="text" id="ses-dedicated" placeholder="الاسم أو مُهدى إلى (مثال: والدي، صديقي، ...)">
+    <div class="balance-box" id="main-balances">
+      <div class="balance-card">
+        <div style="color:var(--muted); font-size: 13px;">
+          <img src="https://i.ibb.co/PZzRT8sX/4115316-ico.png" class="inline-logo" alt="OLA">رصيد OLA
+        </div>
+        <div class="balance-amount" id="wallet-ola">0</div>
+      </div>
+      <div class="balance-card">
+        <div style="color:var(--muted); font-size: 13px;">رصيد USDT</div>
+        <div class="balance-amount usdt" id="wallet-usdt">0 $</div>
+      </div>
+    </div>
+    
+    <div class="nav-tabs">
+      <button id="tab-send" class="active">تحويل موحد</button>
+      <button id="tab-swap">تداول العملات</button>
+      <button id="tab-market">📊 أسعار السوق المباشرة</button>
+    </div>
+
+    <!-- نافذة التحويل -->
+    <div id="sec-send" class="card">
+      <h3 style="color:var(--brand); margin-top:0; font-size:17px;">التحويل الداخلي الموحد</h3>
+      <div id="tx-currency-container" class="custom-select"><input type="hidden" id="tx-currency" value="OLA"></div>
+      <input id="tx-to" placeholder="رقم حساب المستلم (OLA)" dir="ltr" style="text-align:right;">
+      <div class="input-group">
+        <button class="btn-max" id="btn-max-send" type="button">MAX</button>
+        <input id="tx-amount" type="number" step="any" placeholder="المبلغ المراد إرساله" dir="ltr" style="text-align:right;">
+      </div>
+      <div style="font-size:12px; color:var(--warn); margin-bottom:10px;">* سيتم خصم 2% رسوم شبكة بعملة OLA.</div>
+      <button id="btn-execute-send">إرسال الآن</button>
+      <div id="tx-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
+    </div>
+
+    <!-- نافذة التداول -->
+    <div id="sec-swap" class="card hidden">
+      <h3 style="color:var(--ok); margin-top:0; font-size:17px;">تداول فوري شامل</h3>
+      <div class="swap-container">
+        <div style="color:var(--muted); font-size: 13px; margin-bottom: 5px;">أريد دفع (من رصيدي):</div>
+        <div id="swap-from-container" class="custom-select"><input type="hidden" id="swap-from" value="USDT"></div>
+        <div class="input-group">
+          <button class="btn-max" id="btn-max-swap" type="button">MAX</button>
+          <input id="swap-amount" type="number" step="any" placeholder="الكمية المراد دفعها" dir="ltr" style="text-align:right;">
+        </div>
+        <div style="text-align: center; margin: 10px 0; color: var(--muted); font-weight:bold;">⬇️ تبديل إلى ⬇️</div>
+        <div style="color:var(--muted); font-size: 13px; margin-bottom: 5px;">أريد استلام (إلى محفظتي):</div>
+        <div id="swap-to-container" class="custom-select"><input type="hidden" id="swap-to" value="OLA"></div>
+        <div class="swap-rate" id="swap-rate-display">Rate: —</div>
         
-        <select id="ses-intention">
-            <option value="" disabled selected>-- اختر النية --</option>
-            <option value="الشفاء">الشفاء</option>
-            <option value="الرحمة">الرحمة</option>
-            <option value="إلى روح المرحوم">الوفاة (إلى روح المرحوم)</option>
-            <option value="الزواج">الزواج</option>
-            <option value="العمل">العمل</option>
-            <option value="النجاح">النجاح</option>
-            <option value="مباركة بنجاح">مباركة بنجاح</option>
-            <option value="السفر">السفر</option>
-            <option value="الولادة">الولادة</option>
-            <option value="مباركة بولادة">مباركة بولادة</option>
-            <option value="التوفيق">التوفيق</option>
-            <option value="قضاء الحاجة">قضاء الحاجة</option>
-            <option value="تفريج الهم">تفريج الهم</option>
-        </select>
-        
-        <input type="number" id="ses-days" placeholder="مدة المجلس (بالأيام)" min="1" max="30" value="1">
-        <select id="ses-dhikr-select"></select>
-        <div style="display:flex; gap:10px;">
-            <button id="btn-submit-session">إطلاق المجلس</button>
-            <button id="btn-cancel-session" class="outline danger">إلغاء</button>
+        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px dashed var(--line); margin-top: 10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
+                <span style="color:var(--muted); font-size:13px;">رسوم الشبكة (2%):</span>
+                <div id="swap-fee-display" style="font-weight:bold; color:var(--danger); direction:ltr;">0 OLA</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items: center;">
+                <span style="color:var(--muted); font-size:13px;">الكمية المتوقعة:</span>
+                <div id="swap-receive" style="font-size:18px; font-weight:bold; color:var(--ok); direction:ltr; text-align:left;">0</div>
+            </div>
         </div>
-        <div id="ses-error" style="color:var(--danger); font-size:12px; margin-top:10px; text-align:center; line-height: 1.6;"></div>
+      </div>
+      <button id="btn-execute-swap" style="background:var(--ok); color:white;">تنفيذ عملية التداول</button>
+      <div id="swap-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
     </div>
 
-    <h4 style="border-bottom:1px solid var(--gold-light); padding-bottom:8px;">المجالس المفتوحة حالياً</h4>
-    <div id="active-sessions-list">جاري التحميل...</div>
-
-    <h4 style="border-bottom:1px solid var(--gold-light); padding-bottom:8px; margin-top:25px;">المجالس المنتهية</h4>
-    <div id="my-ended-sessions">جاري التحميل...</div>
-  </div>
-
-  <!-- صفحة داخل المجلس -->
-  <div id="view-inside-session" class="view hidden card">
-    <div style="text-align:center; margin-bottom:20px;">
-        <h2 style="color:var(--gold); margin-bottom:5px;">مجلس نور</h2>
-        <div style="font-size:18px; font-weight:bold;" id="ins-dedicated">مُهدى إلى: —</div>
-        <div style="font-size:16px; color:var(--text-main);" id="ins-intention">النية: —</div>
-        <div style="font-size:14px; margin-top:10px; color:var(--danger);" id="ins-timer">ينتهي بعد: —</div>
-    </div>
-    
-    <div style="background:var(--bg-top); padding:20px; border-radius:16px; text-align:center; border:2px dashed var(--gold);">
-        <div id="ins-dhikr-text" style="font-size:24px; line-height:1.6; margin-bottom:20px;">—</div>
-        <button id="btn-session-click" style="font-size:20px; padding:20px; height:auto;">
-            سَبِّح
-            <div id="ins-my-clicks" class="counter-badge" style="display:block; margin:15px auto 0; width:fit-content; font-size:24px;">0</div>
-        </button>
+    <!-- نافذة السوق -->
+    <div id="sec-market" class="card hidden">
+      <h3 style="color:var(--brand); margin-top:0; margin-bottom:12px; font-size:17px;">لوحة أسعار السوق المباشرة</h3>
+      <div class="market-base-control">
+        <label>عرض الأسعار مقابل:</label>
+        <div id="market-base-currency-container" class="custom-select"><input type="hidden" id="market-base-currency" value="USDT"></div>
+      </div>
+      <div id="market-list"></div>
     </div>
 
-    <div style="margin-top: 30px; border-top: 1px solid var(--gold-light); padding-top: 15px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h4 style="margin: 0;">المشاركون في المجلس (<span id="ins-participants-count" class="en-num">0</span>)</h4>
-            <span style="font-size:10px; color:var(--accent);">تحديث تلقائي ⏳</span>
-        </div>
-        <div id="ins-participants-list" style="margin-top:10px; max-height: 250px; overflow-y: auto; background: rgba(255,255,255,0.7); border-radius: 12px; padding: 10px; border: 1px solid rgba(212, 175, 55, 0.3);">
-            <div style='text-align:center; font-size:14px;'>جاري تحميل المشاركين...</div>
-        </div>
-    </div>
-    
-    <button onclick="exitSession()" class="outline danger" style="margin-top:20px;">الخروج من المجلس</button>
-  </div>
-
-  <!-- صفحة الترتيب -->
-  <div id="view-ranking" class="view hidden card">
-    <div class="ramadan-banner">
-        🌙 المركز الأول يحصل على جائزة كبرى بقيمة<br>
-        <span class="en-num" style="font-size:22px;">1,000,000,000 OLA</span><br>
-        في شهر رمضان المبارك!
-    </div>
-    <h3 style="text-align:center;">ترتيب الذاكرين</h3>
-    <div id="ranking-list">جاري التحميل...</div>
-  </div>
-
-  <!-- صفحة الملف الشخصي -->
-  <div id="view-profile" class="view hidden card">
-    <h3 style="text-align:center; border-bottom:2px solid var(--gold-light); padding-bottom:10px;">حسابي الموحد</h3>
-    <div style="font-size:18px; line-height:2.2; text-align: center; margin-bottom: 25px;">
-        <p>الاسم: <strong id="prof-name">—</strong></p>
-        <p>رقم الحساب: <strong id="prof-ola" class="en-num" style="color:var(--gold);">—</strong></p>
-        <p>حالة الاشتراك: <strong id="prof-vip">—</strong></p>
-        <p>إجمالي تسبيحات الترتيب العام: <strong id="prof-total" class="en-num" style="color:var(--accent); font-size:24px;">0</strong></p>
-    </div>
-    <button onclick="logoutUser()" class="outline danger" style="border-width: 2px;">تسجيل الخروج / تبديل الحساب</button>
+    <h3 style="color:var(--muted); margin: 20px 0 10px 0; font-size:16px;">المحفظة الاستثمارية (الأصول الرقمية)</h3>
+    <div id="custom-coins-list"></div>
+    <button id="btn-logout" class="danger">تسجيل الخروج من المحفظة</button>
   </div>
 </div>
 
-<div class="bottom-nav hidden" id="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('dhikr')">الورد</button>
-    <button class="nav-item" onclick="switchTab('sessions')">المجالس</button>
-    <button class="nav-item" onclick="switchTab('ranking')">الترتيب</button>
-    <button class="nav-item" onclick="switchTab('profile')">حسابي</button>
+<!-- مودال إيصال التحويل -->
+<div id="receipt-modal" class="modal-overlay hidden">
+  <div class="receipt-card">
+    <div class="receipt-icon">🧾</div>
+    <div class="receipt-title">إيصال المعاملة</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-label">معرف المعاملة</span><span class="info-value" id="rec-tx" dir="ltr" style="font-family:monospace; color:var(--brand); font-size:11px;">—</span></div>
+      <div class="info-row"><span class="info-label">المستلم</span><span class="info-value" id="rec-to" dir="ltr">—</span></div>
+      <div class="info-row"><span class="info-label">المبلغ المُرسل</span><span class="info-value" id="rec-amount" style="color:var(--ok); direction:ltr;">—</span></div>
+      <div class="info-row"><span class="info-label">رسوم الشبكة</span><span class="info-value" id="rec-fee" style="color:var(--danger); direction:ltr;">—</span></div>
+    </div>
+    <button onclick="document.getElementById('receipt-modal').classList.add('hidden')" style="width:100%;">إغلاق الإيصال</button>
+  </div>
+</div>
+
+<!-- مودال إيصال التداول -->
+<div id="swap-receipt-modal" class="modal-overlay hidden">
+  <div class="receipt-card">
+    <div class="receipt-icon">🔄</div>
+    <div class="receipt-title">إيصال تداول فوري</div>
+    <div class="info-box">
+      <div class="info-row"><span class="info-label">معرف المعاملة</span><span class="info-value" id="rec-swap-tx" dir="ltr" style="font-family:monospace; color:var(--brand); font-size:11px;">—</span></div>
+      <div class="info-row"><span class="info-label">زوج التداول</span><span class="info-value" id="rec-swap-pair" dir="ltr">—</span></div>
+      <div class="info-row"><span class="info-label">الكمية المدفوعة</span><span class="info-value" id="rec-swap-paid" style="color:var(--warn); direction:ltr;">—</span></div>
+      <div class="info-row"><span class="info-label">الكمية المستلمة</span><span class="info-value" id="rec-swap-received" style="color:var(--ok); direction:ltr;">—</span></div>
+      <div class="info-row"><span class="info-label">رسوم الشبكة</span><span class="info-value" id="rec-swap-fee" style="color:var(--danger); direction:ltr;">—</span></div>
+    </div>
+    <button onclick="document.getElementById('swap-receipt-modal').classList.add('hidden')" style="width:100%;">إغلاق الإيصال</button>
+  </div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://jazz-rapid-finance-gate.trycloudflare.com"; 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"; 
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SUPABASE_URL = "http://167.86.106.111:8000";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"; 
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let OLA_ID = localStorage.getItem("ola_id");
-let userProfile = null;
-let dhikrData = { d1:0, d2:0, d3:0, d4:0, d5:0, d6:0, d7:0, d8:0, d9:0, d10:0, total_dhikr:0 };
-let pendingGlobalClicks = 0;
+  let currentOla = null, currentBalance = 0, currentUsdt = 0;
+  let customTokens = {}; 
+  const OLA_FIXED_PRICE = 0.000001; 
+  let marketLiquidityData = {};
+  let previousPrices = {}; 
+  let listedCoinsCache = [];
+  let currentSecurityQuestion = "";
+  const securityQuestionsList = [ "ما هو اسم والدك؟", "ما هو لونك المفضل؟" ];
 
-let activeSessionId = null;
-let sessionLocalClicks = 0; 
-let sessionTotalSaved = 0; 
-let sessionClicksCache = {}; 
-let isSyncing = false;
-let syncInterval = null;
+  const OLA_LOGO = "https://i.ibb.co/PZzRT8sX/4115316-ico.png";
+  const USDT_LOGO = "https://cryptologos.cc/logos/tether-usdt-logo.png";
+  const DEF_LOGO = "https://i.ibb.co/v4tN7K0/default-coin.png";
 
-let myFollows = [];
-let currentTargetUser = null;
+  function convertArabicNumbersToEnglish(text) {
+    if (!text) return text;
+    const arabic = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+    const english = ['0','1','2','3','4','5','6','7','8','9'];
+    arabic.forEach((a,i)=> text = text.replaceAll(a, english[i]));
+    return text;
+  }
+  
+  function formatCleanNumber(num, maxDecimals = 8) {
+      if (num === 0 || isNaN(num) || !isFinite(num)) return "0";
+      if (Math.abs(num) >= 1000) {
+          return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+      }
+      if (Math.abs(num) >= 1) {
+          return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+      }
+      let fixed = Number(num).toFixed(maxDecimals);
+      fixed = fixed.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
+      return fixed;
+  }
 
-const formatNum = (num) => Number(num || 0).toLocaleString('en-US');
+  ['login-ola', 'tx-to', 'tx-amount', 'swap-amount'].forEach(id => {
+      document.getElementById(id).addEventListener("input", function() { this.value = convertArabicNumbersToEnglish(this.value); });
+  });
 
-const adhkars = [
-    "لا اله الا الله",
-    "اللهم صل على سيدنا محمد النبي الأمي وعلى اله وصحبه وسلم",
-    "استغفر الله العظيم و اتوب اليه",
-    "لا حول ولا قوة الا بالله",
-    "سبحان الله العظيم وبحمده",
-    "سبحان الله والحمد لله ولا اله الا الله والله اكبر",
-    "اشهد ان لا اله الا الله واشهد أن محمد رسول الله",
-    "لا اله الا الله وحده لا شريك له له الملك وله الحمد يحيي ويميت وهو على كل شيئ قدير",
-    "أنا لله وانا اليه راجعون",
-    "لا اله الا انت سبحانك اني كنت من الظالمين"
-];
+  const tabs = ['send', 'swap', 'market'];
+  tabs.forEach(tab => {
+      document.getElementById(`tab-${tab}`).onclick = () => {
+          tabs.forEach(t => { 
+              document.getElementById(`tab-${t}`).classList.remove('active'); 
+              document.getElementById(`sec-${t}`).classList.add('hidden'); 
+          });
+          document.getElementById(`tab-${tab}`).classList.add('active'); 
+          document.getElementById(`sec-${tab}`).classList.remove('hidden');
+          if (tab === 'market') renderMarketBoard();
+      };
+  });
 
-const securityQuestionsList = [
-    "ما هو اسم والدك؟",
-    "ما هو لونك المفضل؟",
-    "ما هو اسم حيوانك الأليف الأول؟",
-    "ما هو اسم صديق طفولتك المفضل؟",
-    "ما هي المدينة التي ولدت فيها؟",
-    "ما هو اسم حبيبتك/حبيبك الأول؟",
-    "ما هي أكلتك المفضلة؟"
-];
-let currentSecurityQuestion = "";
+  document.getElementById("btn-go-register").onclick = () => {
+      currentSecurityQuestion = securityQuestionsList[Math.floor(Math.random() * securityQuestionsList.length)];
+      document.getElementById("lbl-sec-q").textContent = currentSecurityQuestion;
+      document.getElementById("login-view").classList.add("hidden");
+      document.getElementById("register-view").classList.remove("hidden");
+  };
+  document.getElementById("btn-cancel-register").onclick = () => {
+      document.getElementById("register-view").classList.add("hidden");
+      document.getElementById("login-view").classList.remove("hidden");
+  };
 
-/* ===== وظائف شاشة التسجيل ===== */
-function showRegisterScreen() {
-    document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("register-screen").classList.remove("hidden");
-    currentSecurityQuestion = securityQuestionsList[Math.floor(Math.random() * securityQuestionsList.length)];
-    document.getElementById("reg-sec-q").innerText = currentSecurityQuestion;
-    document.getElementById("reg-status").innerText = "";
-}
+  function generateOLAID(){
+      const rand = Math.floor(Math.random()*900000000)+100000000;
+      const day  = Math.floor((Date.now()/(1000*60*60*24))%365);
+      return `OLA ${rand}-${day}`;
+  }
 
-function hideRegisterScreen() {
-    document.getElementById("register-screen").classList.add("hidden");
-    document.getElementById("login-screen").classList.remove("hidden");
-}
+  document.getElementById("btn-register").onclick = async () => {
+      const name = document.getElementById("in-name").value.trim();
+      const dob = document.getElementById("in-dob").value.trim();
+      const country = document.getElementById("in-country").value.trim();
+      const city = document.getElementById("in-city").value.trim();
+      const job = document.getElementById("in-job").value.trim();
+      const gender = document.getElementById("in-gender").value;
+      const pass = document.getElementById("in-pass").value.trim();
+      const passConf = document.getElementById("in-pass-confirm").value.trim();
+      const secA = document.getElementById("in-sec-a").value.trim();
+      const out = document.getElementById("reg-status");
 
-function generateOLAID(){
-  const rand = Math.floor(Math.random()*900000000)+100000000;
-  const day  = Math.floor((Date.now()/(1000*60*60*24))%365);
-  return `OLA ${rand}-${day}`;
-}
+      if (!name || !dob || !country || !city || !job || !gender || !pass || !secA) return out.textContent = "⚠️ الرجاء ملء جميع الحقول.";
+      if (pass !== passConf) return out.textContent = "⚠️ كلمتا السر غير متطابقتين.";
 
-async function registerNewUser() {
-    const name = document.getElementById("reg-name").value.trim();
-    const dob = document.getElementById("reg-dob").value.trim();
-    const country = document.getElementById("reg-country").value.trim();
-    const city = document.getElementById("reg-city").value.trim();
-    const job = document.getElementById("reg-job").value.trim();
-    const gender = document.getElementById("reg-gender").value;
-    const pass = document.getElementById("reg-pass").value.trim();
-    const passConf = document.getElementById("reg-pass-confirm").value.trim();
-    const secA = document.getElementById("reg-sec-a").value.trim();
-    const out = document.getElementById("reg-status");
+      const ola = generateOLAID();
+      out.textContent = "⏳ جارٍ إنشاء الحساب والمحفظة...";
+      const expires = new Date(); expires.setFullYear(expires.getFullYear() + 100);
+      const { error } = await client.from("profiles").insert([{
+          full_name: name, dob_text: dob, country: country, city: city, job_title: job, gender: gender,
+          ola_id: ola, balance: 0, usdt_balance: 0, vip_level: 1, vip_expires_on: expires.toISOString().split("T")[0],
+          is_banned: false, password: pass, security_question: currentSecurityQuestion, security_answer: secA
+      }]);
+      if (error) return out.textContent = "❌ خطأ في الاتصال بالخادم.";
+      out.textContent = "✅ تم إنشاء المحفظة. رقمك: " + ola;
+      setTimeout(() => { performLogin(ola, pass); }, 1500);
+  };
 
-    if (!name || !dob || !country || !city || !job || !gender || !pass || !secA) {
-        out.innerText = "⚠️ الرجاء ملء جميع الحقول بما فيها سؤال الأمان."; 
-        out.style.color = "var(--danger)";
-        return;
+  // --- دمج كود النفق الإعلاني (Ad Tunnel) ---
+  async function showAdTunnel(onComplete) {
+      try {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/ola_ads?active=eq.true&select=*', { 
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } 
+          });
+          let ads = await res.json();
+          
+          if (!ads || ads.length === 0) {
+              if(onComplete) onComplete();
+              return;
+          }
+
+          ads = ads.sort(() => 0.5 - Math.random()).slice(0, 2); // يعرض إعلانين عشوائيين
+          let currentAdIndex = 0;
+          let timerInterval = null;
+
+          const overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999999; display:flex; justify-content:center; align-items:center; flex-direction:column; backdrop-filter:blur(5px);';
+          document.body.appendChild(overlay);
+
+          const badge = document.createElement('div');
+          badge.innerText = 'إعلان ممول OLA';
+          badge.style.cssText = 'position:absolute; top:20px; left:20px; background:rgba(212,175,55,0.9); color:#000; padding:6px 12px; border-radius:6px; font-family:Tahoma, sans-serif; font-size:12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.3); z-index:1000000;';
+          badge.onclick = (e) => { e.stopPropagation(); window.open('https://ola1994om-code.github.io/OLA12/', '_blank'); };
+          overlay.appendChild(badge);
+
+          const timerUI = document.createElement('div');
+          timerUI.style.cssText = 'position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.6); color:#fff; padding:8px 20px; border-radius:20px; font-family:Tahoma, sans-serif; font-size:16px; font-weight:bold; border:1px solid #fff; z-index:1000000; direction:ltr;';
+          overlay.appendChild(timerUI);
+
+          const skipBtn = document.createElement('button');
+          skipBtn.style.cssText = 'position:absolute; top:20px; right:20px; width:auto; margin:0; padding:8px 20px; background:#e53935; color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:20px; cursor:pointer; font-family:Tahoma, sans-serif; font-size:14px; font-weight:bold; display:none; z-index:1000000;';
+          overlay.appendChild(skipBtn);
+
+          const visitBtn = document.createElement('button');
+          visitBtn.innerText = '🌐 زيارة صفحة المعلن';
+          visitBtn.style.cssText = 'position:absolute; bottom:40px; padding:12px 25px; background:#0a2e6d; color:#ffffff; border:2px solid #d4af37; border-radius:30px; cursor:pointer; font-family:Tahoma, sans-serif; font-size:16px; font-weight:bold; display:block; box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:1000000; width:auto; max-width:90%; margin:0;';
+          overlay.appendChild(visitBtn);
+
+          const unmuteBtn = document.createElement('button');
+          unmuteBtn.innerHTML = '🔇';
+          unmuteBtn.style.cssText = 'position:absolute; bottom:40px; right:20px; background:rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); width:50px; height:50px; margin:0; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:22px; z-index:1000000; box-shadow:0 4px 10px rgba(0,0,0,0.5); display:none;';
+          overlay.appendChild(unmuteBtn);
+
+          const mediaCont = document.createElement('div');
+          mediaCont.style.cssText = 'width:100%; height:75%; display:flex; justify-content:center; align-items:center; cursor:pointer;';
+          overlay.appendChild(mediaCont);
+
+          function playCurrentAd() {
+              const ad = ads[currentAdIndex];
+              mediaCont.innerHTML = ''; 
+              skipBtn.style.display = 'none';
+              timerUI.style.display = 'block';
+              unmuteBtn.style.display = 'none';
+              
+              skipBtn.innerText = (currentAdIndex === 0 && ads.length > 1) ? 'التالي ⏭' : 'تخطي ⏭';
+
+              if (ad.ad_type === 'video') {
+                  const vid = document.createElement('video');
+                  vid.src = ad.media_url; 
+                  vid.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                  vid.autoplay = true;
+                  vid.muted = true; 
+                  vid.playsInline = true;
+                  mediaCont.appendChild(vid);
+                  
+                  unmuteBtn.style.display = 'flex';
+                  unmuteBtn.onclick = (e) => {
+                      e.stopPropagation();
+                      vid.muted = !vid.muted;
+                      unmuteBtn.innerHTML = vid.muted ? '🔇' : '🔊';
+                  };
+              } else {
+                  const img = document.createElement('img');
+                  img.src = ad.media_url;
+                  img.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                  mediaCont.appendChild(img);
+              }
+
+              visitBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  if(ad.target_url) window.open(ad.target_url, '_blank');
+              };
+
+              skipBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  currentAdIndex++;
+                  if (currentAdIndex < ads.length) {
+                      playCurrentAd();
+                  } else {
+                      document.body.removeChild(overlay);
+                      if(onComplete) onComplete();
+                  }
+              };
+
+              let timeLeft = 5;
+              timerUI.innerText = timeLeft;
+              if(timerInterval) clearInterval(timerInterval);
+              
+              timerInterval = setInterval(() => {
+                  timeLeft--;
+                  if(timeLeft <= 0) {
+                      clearInterval(timerInterval);
+                      timerUI.style.display = 'none';
+                      skipBtn.style.display = 'block';
+                  } else {
+                      timerUI.innerText = timeLeft;
+                  }
+              }, 1000);
+          }
+
+          playCurrentAd();
+
+      } catch (err) {
+          console.error("Ad Tunnel Error:", err);
+          if(onComplete) onComplete();
+      }
+  }
+
+  // --- دوال تسجيل الدخول وفتح المحفظة بعد النفق ---
+  async function performLogin(ola, pass) {
+      const st = document.getElementById("login-status");
+      st.textContent = "⏳ جارٍ التحقق...";
+      const { data } = await client.from("profiles").select("*").eq("ola_id", ola).single();
+      if(data && data.password === pass) {
+          currentOla = data.ola_id; 
+          currentBalance = Number(data.balance) || 0; 
+          currentUsdt = Number(data.usdt_balance) || 0;
+          localStorage.setItem("ola_wallet_session", JSON.stringify({ola_id: ola, pass: pass}));
+          
+          st.textContent = "⏳ يتم توجيهك الآن عبر النفق الآمن...";
+          
+          // تشغيل النفق وبعد الانتهاء نفتح واجهة المحفظة
+          showAdTunnel(async () => {
+              document.getElementById("login-view").classList.add("hidden");
+              document.getElementById("register-view").classList.add("hidden");
+              document.getElementById("wallet-view").classList.remove("hidden");
+              await updateDash();
+              await fetchMarketLiquidity();
+          });
+          
+      } else { 
+          st.textContent = "❌ بيانات غير صحيحة"; 
+          localStorage.removeItem("ola_wallet_session"); 
+      }
+  }
+
+  window.onload = () => {
+      const savedSession = localStorage.getItem("ola_wallet_session");
+      if(savedSession) { 
+          const creds = JSON.parse(savedSession); 
+          performLogin(creds.ola_id, creds.pass); 
+      }
+  };
+  
+  document.getElementById("btn-login").onclick = () => { performLogin(document.getElementById("login-ola").value.trim().toUpperCase(), document.getElementById("login-pass").value.trim()); };
+  document.getElementById("btn-logout").onclick = () => { localStorage.removeItem("ola_wallet_session"); location.reload(); };
+
+  function toggleSelect(event, id) {
+      event.stopPropagation();
+      document.querySelectorAll('.custom-select-options').forEach(el => {
+          if(el.id !== id + '-options') el.classList.remove('show');
+      });
+      document.getElementById(id + '-options').classList.toggle('show');
+  }
+  document.addEventListener('click', () => { document.querySelectorAll('.custom-select-options').forEach(el => el.classList.remove('show')); });
+
+  const selectCallbacks = {
+      'market-base-currency': () => { if(typeof renderMarketBoard === 'function') renderMarketBoard(); },
+      'swap-from': () => { if(typeof updateSwapEstimate === 'function') updateSwapEstimate(); },
+      'swap-to': () => { if(typeof updateSwapEstimate === 'function') updateSwapEstimate(); }
+  };
+
+  function selectOption(id, val, text, img) {
+      const input = document.getElementById(id);
+      if(input.value !== val) {
+          input.value = val;
+          const trigger = document.getElementById(id + '-container').querySelector('.custom-select-trigger div');
+          trigger.innerHTML = `<img src="${img}"> <span>${text}</span>`;
+          if(selectCallbacks[id]) selectCallbacks[id]();
+      }
+      document.getElementById(id + '-options').classList.remove('show');
+  }
+
+  function renderCustomSelect(elementId, options, defaultValue) {
+      const container = document.getElementById(elementId + "-container");
+      if(!container) return;
+      let currentValue = defaultValue || options[0].value;
+      let selectedOpt = options.find(o => o.value === currentValue) || options[0];
+      
+      let html = `<div class="custom-select-trigger" onclick="toggleSelect(event, '${elementId}')">`;
+      html += `<div style="display:flex; align-items:center;"><img src="${selectedOpt.img}"> <span>${selectedOpt.text}</span></div><span class="arrow-icon">▼</span></div>`;
+      html += `<div class="custom-select-options" id="${elementId}-options">`;
+      options.forEach(opt => {
+          html += `<div class="custom-option" onclick="selectOption('${elementId}', '${opt.value}', '${opt.text}', '${opt.img}')"><img src="${opt.img}"> <span>${opt.text}</span></div>`;
+      });
+      html += `</div><input type="hidden" id="${elementId}" value="${selectedOpt.value}">`;
+      container.innerHTML = html;
+  }
+
+  async function updateDash() {
+    document.getElementById("wallet-ola").textContent = currentBalance.toLocaleString('en-US');
+    document.getElementById("wallet-usdt").textContent = Math.floor(currentUsdt).toLocaleString('en-US') + " $";
+    document.getElementById("wallet-id").textContent = currentOla;
+
+    const { data: listedCoins } = await client.from("custom_coins").select("symbol, logo, price_type, name, supply, mining_power, owner_name, owner_id").eq("is_listed", true);
+    listedCoinsCache = listedCoins || [];
+    const listedData = {};
+    let txOptions = [ { value: 'OLA', text: 'إرسال OLA', img: OLA_LOGO }, { value: 'USDT', text: 'إرسال USDT', img: USDT_LOGO } ];
+    let swapOptionsList = [ { value: 'USDT', text: 'USDT (الدولار الرقمي)', img: USDT_LOGO }, { value: 'OLA', text: 'OLA', img: OLA_LOGO } ];
+    let marketBaseOptionsList = [ { value: 'USDT', text: 'USDT (الدولار)', img: USDT_LOGO }, { value: 'OLA', text: 'OLA', img: OLA_LOGO } ];
+
+    if(listedCoinsCache.length > 0) {
+        listedCoinsCache.forEach(c => { 
+            let img = c.logo || DEF_LOGO;
+            listedData[c.symbol] = { logo: img, name: c.name, type: c.price_type }; 
+            swapOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
+            marketBaseOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
+        });
     }
-    if (pass !== passConf) {
-        out.innerText = "⚠️ كلمتا السر غير متطابقتين."; 
-        out.style.color = "var(--danger)";
-        return;
-    }
 
-    const ola = generateOLAID();
-    out.innerText = "⏳ جارٍ إنشاء الحساب...";
-    out.style.color = "var(--text-main)";
-    
-    const expires = new Date(); 
-    expires.setFullYear(expires.getFullYear() + 100);
+    const { data: tokens } = await client.from("token_balances").select("*").eq("ola_id", currentOla);
+    const cList = document.getElementById("custom-coins-list");
+    cList.innerHTML = "";
+    customTokens = {};
 
-    const { error } = await client.from("profiles").insert([{
-        full_name: name, dob_text: dob, country: country, city: city, job_title: job, gender: gender,
-        ola_id: ola, balance: 0, vip_level: 1, vip_expires_on: expires.toISOString().split("T")[0],
-        is_banned: false, password: pass,
-        security_question: currentSecurityQuestion, security_answer: secA
-    }]);
-    
-    if (error) { 
-        out.innerText = "❌ حدث خطأ في الاتصال بقاعدة البيانات."; 
-        out.style.color = "var(--danger)"; 
-        console.error(error); 
-        return; 
-    }
-    
-    out.innerText = "✅ تم الإنشاء بنجاح! رقمك: " + ola;
-    out.style.color = "var(--accent)";
-    
-    setTimeout(() => { 
-        document.getElementById("login-ola-id").value = ola;
-        document.getElementById("login-password").value = pass;
-        hideRegisterScreen();
-    }, 2500);
-}
-
-/* ===== وظائف التطبيق الرئيسي ===== */
-function checkIsVIP() {
-    if (!userProfile || !userProfile.vip_expires_on) return false;
-    const expiryDate = new Date(userProfile.vip_expires_on);
-    return !isNaN(expiryDate) && expiryDate > new Date();
-}
-
-async function loginUser() {
-    const idInput = document.getElementById("login-ola-id").value.trim();
-    const passInput = document.getElementById("login-password").value.trim();
-
-    if(!idInput || !passInput) {
-        alert("الرجاء إدخال رقم الحساب وكلمة المرور.");
-        return;
-    }
-
-    const btn = document.getElementById("btn-login");
-    btn.innerText = "جاري التحقق...";
-    btn.disabled = true;
-
-    try {
-        const { data: profile, error } = await client.from("profiles")
-            .select("*")
-            .eq("ola_id", idInput)
-            .single();
-
-        if (error) {
-            console.error(error);
-            alert("حدث خطأ في الاتصال بقاعدة البيانات. (تأكد من أن الرابط https)");
-            btn.innerText = "تسجيل الدخول";
-            btn.disabled = false;
-            return;
-        }
-
-        if (profile) {
-            if (profile.password && profile.password !== passInput) {
-                alert("كلمة المرور غير صحيحة.");
-                btn.innerText = "تسجيل الدخول";
-                btn.disabled = false;
-                return;
+    if(tokens && tokens.length > 0) {
+        tokens.forEach(t => {
+            let b = Number(t.balance) || 0;
+            if(b > 0 && listedData[t.symbol]) {
+                customTokens[t.symbol] = b;
+                let logoSrc = listedData[t.symbol].logo || DEF_LOGO;
+                cList.innerHTML += `
+                <div class="coin-list-item">
+                  <div class="coin-list-info">
+                    <img src="${logoSrc}" class="coin-logo" alt="${t.symbol}">
+                    <div><h4>${t.symbol}</h4><p>${b.toLocaleString('en-US')}</p></div>
+                  </div>
+                </div>`;
+                txOptions.push({ value: t.symbol, text: `إرسال ${t.symbol}`, img: logoSrc });
             }
-            
-            localStorage.setItem("ola_id", idInput);
-            OLA_ID = idInput; 
-            
-            btn.innerText = "تسجيل الدخول";
-            btn.disabled = false;
-
-            await init();
-        } else {
-            alert("الحساب غير موجود.");
-            btn.innerText = "تسجيل الدخول";
-            btn.disabled = false;
-        }
-    } catch (err) {
-        console.error(err);
-        alert("حدث خطأ أثناء الاتصال بالسيرفر. إذا كنت تستخدم GitHub تأكد من أن الرابط يبدأ بـ HTTPS.");
-        btn.innerText = "تسجيل الدخول";
-        btn.disabled = false;
-    }
-}
-
-async function logoutUser() {
-    if(confirm("هل أنت متأكد أنك تريد تسجيل الخروج والتبديل إلى حساب آخر؟")) {
-        if (pendingGlobalClicks > 0 || sessionLocalClicks > 0) {
-            await syncData();
-        }
-        
-        localStorage.removeItem("ola_id");
-        OLA_ID = null;
-
-        if (syncInterval) {
-            clearInterval(syncInterval);
-            syncInterval = null;
-        }
-
-        userProfile = null;
-        dhikrData = { d1:0, d2:0, d3:0, d4:0, d5:0, d6:0, d7:0, d8:0, d9:0, d10:0, total_dhikr:0 };
-        pendingGlobalClicks = 0;
-        sessionLocalClicks = 0;
-
-        document.getElementById("app-content").classList.add("hidden");
-        document.getElementById("bottom-nav").classList.add("hidden");
-        document.getElementById("user-info-modal").classList.add("hidden");
-        
-        document.getElementById("login-ola-id").value = "";
-        document.getElementById("login-password").value = "";
-        document.getElementById("login-screen").classList.remove("hidden");
-    }
-}
-
-async function init() {
-    if(!OLA_ID) {
-        document.getElementById("app-content").classList.add("hidden");
-        document.getElementById("login-screen").classList.remove("hidden");
-        document.getElementById("bottom-nav").classList.add("hidden");
-        return; 
-    }
-    
-    document.getElementById("login-screen").classList.add("hidden");
-
-    try {
-        const { data: profile } = await client.from("profiles").select("*").eq("ola_id", OLA_ID).single();
-        if(profile) userProfile = profile;
-
-        if (userProfile && userProfile.is_banned) {
-            document.getElementById("app-content").innerHTML = `<div style="text-align:center; padding:60px;">🛑<h2 style="color:var(--danger);">تم حظر حسابك</h2><button onclick="logoutUser()" class="outline danger" style="margin-top:20px;">تسجيل الخروج</button></div>`;
-            document.getElementById("app-content").classList.remove("hidden");
-            return;
-        }
-
-        document.getElementById("app-content").classList.remove("hidden");
-        document.getElementById("bottom-nav").classList.remove("hidden");
-        switchTab('dhikr');
-
-        let { data: counts } = await client.from("adhkar_counters").select("*").eq("ola_id", OLA_ID).single();
-        if(!counts) {
-            await client.from("adhkar_counters").insert([{ ola_id: OLA_ID }]);
-            counts = { d1:0, d2:0, d3:0, d4:0, d5:0, d6:0, d7:0, d8:0, d9:0, d10:0, total_dhikr:0 };
-        }
-        dhikrData = counts;
-
-        const { data: followsData } = await client.from("follows").select("following_ola").eq("follower_ola", OLA_ID);
-        if (followsData) {
-            myFollows = followsData.map(f => f.following_ola);
-        } else {
-            myFollows = [];
-        }
-
-        const { data: settings } = await client.from("app_settings").select("*").maybeSingle();
-        
-        renderDhikr(settings?.friday_mode_active);
-        populateSessionDropdown();
-        updateProfileUI();
-        
-        if(!syncInterval) {
-            syncInterval = setInterval(() => syncData(), 5000); 
-        }
-    } catch (e) {
-        console.error("خطأ في تشغيل التطبيق:", e);
-        alert("حدث خطأ أثناء تحميل بيانات التطبيق.");
-    }
-}
-
-function renderDhikr(isFriday) {
-    const list = document.getElementById("normal-dhikr-list");
-    list.innerHTML = "";
-    
-    adhkars.forEach((text, index) => {
-        const i = index + 1;
-        if (isFriday && index !== 1) return;
-        
-        const btn = document.createElement("button");
-        btn.className = "dhikr-btn";
-        btn.innerHTML = `<div style="flex:1;">${text}</div> <div class="counter-badge" id="counter-${i}">${formatNum(dhikrData["d"+i])}</div>`;
-        btn.onclick = () => addDhikr(i);
-        list.appendChild(btn);
-    });
-}
-
-function addDhikr(index) {
-    dhikrData["d"+index]++; 
-    dhikrData.total_dhikr++; 
-    pendingGlobalClicks++;
-    
-    document.getElementById("counter-"+index).innerText = formatNum(dhikrData["d"+index]);
-    document.getElementById("sync-status").innerText = "جاري الحفظ...";
-}
-
-document.getElementById("btn-session-click").addEventListener("click", () => {
-    if(!activeSessionId) return;
-    sessionLocalClicks++; 
-    dhikrData.total_dhikr++; 
-    pendingGlobalClicks++;
-    
-    document.getElementById("ins-my-clicks").innerText = formatNum(sessionTotalSaved + sessionLocalClicks);
-    document.getElementById("sync-status").innerText = "جاري الحفظ...";
-});
-
-async function syncData(forceSessionId = null) {
-    if (isSyncing) return;
-    isSyncing = true;
-
-    let currentSession = forceSessionId || activeSessionId;
-    let addedGlobal = pendingGlobalClicks; 
-    let addedSessionClicks = sessionLocalClicks;
-    
-    if (addedGlobal === 0 && addedSessionClicks === 0) {
-        isSyncing = false;
-        return;
-    }
-
-    pendingGlobalClicks -= addedGlobal; 
-    sessionLocalClicks -= addedSessionClicks; 
-    
-    if (currentSession && addedSessionClicks > 0) {
-        sessionTotalSaved += addedSessionClicks;
-        sessionClicksCache[currentSession] = sessionTotalSaved;
-    }
-
-    let isSynced = false;
-
-    if (addedGlobal > 0 || addedSessionClicks > 0) {
-        const { error } = await client.from("adhkar_counters").update(dhikrData).eq("ola_id", OLA_ID);
-        if (!error) {
-            isSynced = true;
-        } else {
-            pendingGlobalClicks += addedGlobal; 
-        }
-    }
-
-    if (currentSession && addedSessionClicks > 0) {
-        const { error } = await client.from("session_clicks").upsert(
-            { session_id: currentSession, ola_id: OLA_ID, clicks: sessionTotalSaved },
-            { onConflict: 'session_id, ola_id' }
-        );
-        
-        if (!error) {
-            isSynced = true;
-        } else {
-            sessionTotalSaved -= addedSessionClicks;
-            sessionLocalClicks += addedSessionClicks;
-            sessionClicksCache[currentSession] = sessionTotalSaved;
-        }
-    }
-    
-    if (isSynced) {
-        document.getElementById("sync-status").innerText = "متزامن ✅";
-        updateProfileUI();
-    } else {
-        document.getElementById("sync-status").innerText = "خطأ بالمزامنة ❌";
-    }
-
-    if (currentSession && !document.getElementById("view-inside-session").classList.contains("hidden")) {
-        loadSessionParticipants(currentSession);
-    }
-    
-    isSyncing = false;
-}
-
-function populateSessionDropdown() {
-    const select = document.getElementById("ses-dhikr-select");
-    adhkars.forEach((text, i) => {
-        select.innerHTML += `<option value="${i}">${text}</option>`;
-    });
-}
-
-document.getElementById("btn-show-create-session").onclick = () => {
-    document.getElementById("create-session-form").classList.remove("hidden");
-};
-document.getElementById("btn-cancel-session").onclick = () => {
-    document.getElementById("create-session-form").classList.add("hidden");
-};
-
-document.getElementById("btn-submit-session").onclick = async () => {
-    const dedicated = document.getElementById("ses-dedicated").value.trim();
-    const intention = document.getElementById("ses-intention").value.trim();
-    const index = document.getElementById("ses-dhikr-select").value;
-    const days = parseInt(document.getElementById("ses-days").value, 10);
-    const err = document.getElementById("ses-error");
-    
-    if(!dedicated || !intention) return err.innerText = "الرجاء تعبئة جميع الحقول.";
-    if(isNaN(days) || days < 1 || days > 30) return err.innerText = "مدة المجلس يجب أن تكون بين يوم واحد و 30 يوماً.";
-    
-    err.innerText = "⏳ جاري التحقق...";
-
-    const { data: activeSessions } = await client.from("special_sessions")
-        .select("id")
-        .eq("creator_ola", OLA_ID)
-        .eq("is_claimed", false);
-        
-    if(activeSessions && activeSessions.length > 0) {
-        return err.innerText = "❌ لديك مجلس قيد التشغيل حالياً يرجى إغلاقه أولاً.";
-    }
-
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + days);
-
-    const { error } = await client.from("special_sessions").insert([{
-        creator_ola: OLA_ID,
-        creator_name: userProfile.full_name,
-        intention: intention,
-        dedicated_to: dedicated,
-        dhikr_index: index,
-        expires_at: expiresAt.toISOString()
-    }]);
-
-    if(error) return err.innerText = "❌ حدث خطأ بالسيرفر.";
-    
-    err.innerText = "";
-    document.getElementById("create-session-form").classList.add("hidden");
-    alert("✅ تم إطلاق المجلس المبارك بنجاح!");
-    loadSessions();
-};
-
-async function loadSessions() {
-    const activeList = document.getElementById("active-sessions-list");
-    const endedList = document.getElementById("my-ended-sessions");
-    activeList.innerHTML = "⏳ جاري التحميل..."; endedList.innerHTML = "⏳ جاري التحميل...";
-
-    const now = new Date().toISOString();
-    
-    const { data: active } = await client.from("special_sessions").select("*").gt("expires_at", now).order("id", {ascending: false});
-    const { data: ended } = await client.from("special_sessions").select("*").eq("creator_ola", OLA_ID).lte("expires_at", now).eq("is_claimed", false);
-
-    activeList.innerHTML = "";
-    if(!active || active.length === 0) activeList.innerHTML = "<div style='text-align:center; padding:10px;'>لا توجد مجالس مفتوحة حالياً.</div>";
-    else {
-        active.forEach(s => {
-            activeList.innerHTML += `
-            <div class="session-item" style="display:block;">
-                <div style="font-weight:bold; color:var(--gold);">إلى: ${s.dedicated_to}</div>
-                <div style="font-size:14px; margin-bottom:10px;">النية: ${s.intention}</div>
-                <div style="font-size:12px; color:var(--text-main); margin-bottom:10px;">من: ${s.creator_name}</div>
-                <button onclick="joinSession(${s.id}, '${s.dedicated_to}', '${s.intention}', ${s.dhikr_index}, '${s.expires_at}')">دخول المجلس</button>
-            </div>`;
         });
     }
+    if(cList.innerHTML === "") cList.innerHTML = `<div style="font-size:13px; color:var(--muted); text-align:center; padding:10px;">لا توجد عملات استثمارية مدرجة في رصيدك.</div>`;
 
-    endedList.innerHTML = "";
-    if(!ended || ended.length === 0) endedList.innerHTML = "<div style='text-align:center; padding:10px;'>لا توجد مجالس منتهية بانتظار الإغلاق.</div>";
-    else {
-        ended.forEach(s => {
-            endedList.innerHTML += `
-            <div class="session-item" style="display:block;">
-                <div style="font-weight:bold;">إلى: ${s.dedicated_to}</div>
-                <button onclick="closeSession(${s.id})" style="margin-top:10px; background:var(--accent); border-color:var(--accent);">إغلاق المجلس</button>
-            </div>`;
-        });
-    }
-}
+    renderCustomSelect('tx-currency', txOptions, document.getElementById("tx-currency") ? document.getElementById("tx-currency").value : 'OLA');
+    renderCustomSelect('swap-from', swapOptionsList, document.getElementById("swap-from") ? document.getElementById("swap-from").value : "USDT");
+    renderCustomSelect('swap-to', swapOptionsList, document.getElementById("swap-to") ? document.getElementById("swap-to").value : "OLA");
+    renderCustomSelect('market-base-currency', marketBaseOptionsList, document.getElementById("market-base-currency") ? document.getElementById("market-base-currency").value : "USDT");
+  }
 
-async function loadSessionParticipants(sessionIdOverride = null) {
-    let targetSession = sessionIdOverride || activeSessionId;
-    if (!targetSession) return;
+  async function fetchMarketLiquidity() {
+      const { data: coins } = await client.from("custom_coins").select("symbol, price_type").eq("is_listed", true);
+      const { data: liqs } = await client.from("coin_liquidity").select("*");
+      if(coins && liqs) {
+          coins.forEach(c => {
+             let liq = liqs.find(l => l.coin_symbol === c.symbol);
+             if(liq) marketLiquidityData[c.symbol] = { ...liq, type: c.price_type };
+          });
+      }
+  }
 
-    try {
-        const { data: clicksData } = await client
-            .from("session_clicks")
-            .select("ola_id, clicks")
-            .eq("session_id", targetSession)
-            .order("clicks", { ascending: false });
+  function getPriceInUsdt(symbol) {
+      if(symbol === 'USDT') return 1;
+      if(symbol === 'OLA') return OLA_FIXED_PRICE;
+      let liq = marketLiquidityData[symbol];
+      if(liq && Number(liq.coin_reserve) > 0) return Number(liq.usdt_reserve) / Number(liq.coin_reserve);
+      return 0;
+  }
 
-        let participants = clicksData || [];
-        
-        let myTotal = sessionTotalSaved + sessionLocalClicks;
-        let myEntry = participants.find(c => c.ola_id === OLA_ID);
-        
-        if (myEntry) {
-            myEntry.clicks = Math.max(Number(myEntry.clicks), myTotal);
-        } else if (myTotal > 0) {
-            participants.push({ ola_id: OLA_ID, clicks: myTotal });
-        }
+  async function renderMarketBoard() {
+      const list = document.getElementById("market-list");
+      list.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:13px; padding:15px;">⏳ جاري تحديث بيانات السوق...</div>`;
+      
+      await fetchMarketLiquidity();
+      const baseCoin = document.getElementById("market-base-currency").value;
+      const basePriceInUsdt = getPriceInUsdt(baseCoin);
 
-        participants.sort((a, b) => b.clicks - a.clicks);
+      if(basePriceInUsdt <= 0) return list.innerHTML = `<div style="text-align:center; color:var(--danger); font-size:13px;">تعذر استخراج السعر.</div>`;
 
-        if (participants.length === 0) {
-            document.getElementById("ins-participants-count").innerText = "0";
-            document.getElementById("ins-participants-list").innerHTML = "<div style='text-align:center; font-size:14px;'>لا يوجد مشاركين حتى الآن. كُن أول الذاكرين!</div>";
-            return;
-        }
+      let allCoins = [ { symbol: "OLA", name: "عملة OLA", logo: OLA_LOGO, price_type: "fixed" }, ...listedCoinsCache ];
+      let displayCoins = allCoins.filter(c => c.symbol !== baseCoin);
+      if(baseCoin !== 'USDT') displayCoins.unshift({ symbol: "USDT", name: "USDT Dollar", logo: USDT_LOGO, price_type: "fixed" });
 
-        document.getElementById("ins-participants-count").innerText = participants.length;
+      let html = "";
+      displayCoins.forEach(coin => {
+          let coinPriceInUsdt = getPriceInUsdt(coin.symbol);
+          let rateAgainstBase = coinPriceInUsdt / basePriceInUsdt;
+          let reverseRate = rateAgainstBase > 0 ? (1 / rateAgainstBase) : 0;
+          let logoSrc = coin.logo || DEF_LOGO;
+          
+          let typeBadge = (coin.symbol === 'OLA' || coin.symbol === 'USDT') ? `<span class="badge fixed">سعر ثابت</span>` : `<span class="badge var">متغير السيولة</span>`;
+          
+          let arrow = "", priceColor = "";
+          if(previousPrices[coin.symbol] !== undefined) {
+              if(coinPriceInUsdt > previousPrices[coin.symbol]) { 
+                  arrow = `<span class="trend-up">▲</span>`; 
+                  priceColor = "price-up"; 
+              } else if(coinPriceInUsdt < previousPrices[coin.symbol]) { 
+                  arrow = `<span class="trend-down">▼</span>`; 
+                  priceColor = "price-down"; 
+              } else {
+                  arrow = `<span class="trend-flat">▬</span>`; 
+              }
+          } else {
+              arrow = `<span class="trend-flat">▬</span>`;
+          }
+          previousPrices[coin.symbol] = coinPriceInUsdt;
 
-        const ids = participants.map(c => c.ola_id);
-        const { data: profs } = await client.from("profiles").select("ola_id, full_name, avatar_url").in("ola_id", ids);
-        
-        const profMap = {};
-        if (profs) profs.forEach(p => profMap[p.ola_id] = p);
+          let rateFormatted = formatCleanNumber(rateAgainstBase, 6);
+          let revFormatted = formatCleanNumber(reverseRate, 4);
+          let usdFormatted = formatCleanNumber(coinPriceInUsdt, 6);
 
-        let html = "";
-        participants.forEach(c => {
-            const prof = profMap[c.ola_id] || { full_name: "مستخدم OLA", avatar_url: null };
-            const isMe = c.ola_id === OLA_ID;
-            
-            const avatarSrc = prof.avatar_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' fill='%23e8f5e9'/%3E%3Ctext x='50%25' y='50%25' fill='%231b5e20' font-size='20' font-family='Arial' text-anchor='middle' dy='.3em'%3E%D8%9F%3C/text%3E%3C/svg%3E";
-            
-            const safeName = prof.full_name ? prof.full_name.replace(/'/g, "\\'") : "مستخدم OLA";
+          html += `
+          <div class="pro-market-card">
+              <div class="pro-market-top">
+                  <div class="coin-list-info">
+                      <img src="${logoSrc}" class="coin-logo" alt="${coin.symbol}">
+                      <div>
+                          <div style="font-weight:bold; font-size:15px; color:#fff;">${coin.name} <span style="font-size:12px; color:var(--muted);">(${coin.symbol})</span></div>
+                          <div style="margin-top:3px;">${typeBadge}</div>
+                      </div>
+                  </div>
+                  <div style="text-align:left;">
+                      <div class="price-main ${priceColor}">
+                          <span dir="ltr">${rateFormatted}</span> 
+                          <span style="font-size:13px; color:var(--brand); margin-left:4px;">${baseCoin}</span> 
+                          ${arrow}
+                      </div>
+                      <div style="font-size:11px; color:var(--muted); direction:ltr; text-align:left; margin-top:2px;">$${usdFormatted} USD</div>
+                  </div>
+              </div>
+              <div class="pro-market-bottom">
+                  <div>1 ${coin.symbol} = ${rateFormatted} ${baseCoin}</div>
+                  <div>1 ${baseCoin} = ${revFormatted} ${coin.symbol}</div>
+              </div>
+          </div>`;
+      });
+      list.innerHTML = html;
+  }
 
-            let actionBtn = isMe 
-                ? `<span style="color:var(--accent); font-size:12px; font-weight:bold;">(أنت)</span>` 
-                : `<button onclick="showUserProfile('${c.ola_id}', '${safeName}', '${avatarSrc}')" class="outline" style="padding:4px 8px; font-size:12px; border-radius:6px; width:auto; border-color:var(--gold);">عرض الحساب 👤</button>`;
+  document.getElementById("btn-max-send").onclick = (e) => { 
+      e.preventDefault();
+      const curr = document.getElementById("tx-currency") ? document.getElementById("tx-currency").value : 'OLA';
+      let bal = 0;
+      if (curr === 'OLA') bal = Number(currentBalance) || 0;
+      else if (curr === 'USDT') bal = Number(currentUsdt) || 0;
+      else bal = Number(customTokens[curr]) || 0;
+      
+      let maxAmt = 0;
+      if (bal > 0) {
+          if (curr === 'OLA') {
+              maxAmt = bal / 1.02; 
+          } else if (curr === 'USDT') {
+              let maxByFee = (currentBalance * OLA_FIXED_PRICE) / 0.02;
+              maxAmt = Math.min(bal, maxByFee);
+          } else {
+              let tokenPriceUsdt = getPriceInUsdt(curr);
+              let maxByFee = 0;
+              if (tokenPriceUsdt > 0) {
+                  maxByFee = (currentBalance * OLA_FIXED_PRICE) / (tokenPriceUsdt * 0.02);
+              } else {
+                  maxByFee = currentBalance / 0.02; 
+              }
+              maxAmt = Math.min(bal, maxByFee);
+          }
+      }
+      
+      if (curr === 'USDT') maxAmt = Math.floor(maxAmt);
+      else maxAmt = Math.floor(maxAmt * 1000000) / 1000000;
+      
+      document.getElementById("tx-amount").value = maxAmt > 0 ? maxAmt : 0; 
+  };
 
-            html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 8px; border-bottom:1px dashed rgba(212, 175, 55, 0.3); ${isMe ? 'background:rgba(76, 175, 80, 0.1); border-radius:8px;' : ''}">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <img src="${avatarSrc}" style="width:40px; height:40px; border-radius:50%; border:1px solid var(--gold); object-fit:cover;">
-                    <div>
-                        <div style="font-size:14px; font-weight:bold; color:var(--text-main); margin-bottom:4px;">${prof.full_name}</div>
-                        ${actionBtn}
-                    </div>
-                </div>
-                <div class="counter-badge" style="font-size:16px; padding:6px 12px;">${formatNum(c.clicks)}</div>
-            </div>`;
-        });
+  document.getElementById("btn-max-swap").onclick = (e) => {
+      e.preventDefault();
+      const fromCoin = document.getElementById("swap-from") ? document.getElementById("swap-from").value : "USDT";
+      const toCoin = document.getElementById("swap-to") ? document.getElementById("swap-to").value : "OLA";
+      
+      let bal = 0;
+      if(fromCoin === "USDT") bal = Number(currentUsdt) || 0;
+      else if (fromCoin === "OLA") bal = Number(currentBalance) || 0;
+      else bal = Number(customTokens[fromCoin]) || 0;
+      
+      let maxAmt = 0;
+      if (bal > 0) {
+          if (fromCoin === 'OLA') {
+              maxAmt = bal / 1.02;
+          } else {
+              if (toCoin === 'OLA') {
+                  maxAmt = bal;
+              } else {
+                  let fromUsdtPrice = getPriceInUsdt(fromCoin);
+                  if (fromUsdtPrice > 0) {
+                      let maxByFee = (currentBalance * OLA_FIXED_PRICE) / (fromUsdtPrice * 0.02);
+                      maxAmt = Math.min(bal, maxByFee);
+                  }
+              }
+          }
+      }
+      
+      if (fromCoin === 'USDT') maxAmt = Math.floor(maxAmt);
+      else maxAmt = Math.floor(maxAmt * 1000000) / 1000000;
 
-        document.getElementById("ins-participants-list").innerHTML = html;
-    } catch (e) {
-        console.error("خطأ في جلب المشاركين", e);
-    }
-}
+      document.getElementById("swap-amount").value = maxAmt > 0 ? maxAmt : 0;
+      updateSwapEstimate();
+  };
 
-window.joinSession = async (id, dedicated, intention, dhikrIndex, expiresAt) => {
-    activeSessionId = id;
-    sessionLocalClicks = 0;
-    
-    sessionTotalSaved = sessionClicksCache[id] || 0;
-    
-    const { data } = await client.from("session_clicks").select("clicks").match({ session_id: id, ola_id: OLA_ID }).maybeSingle();
-    if(data) {
-        let dbClicks = Number(data.clicks);
-        sessionTotalSaved = Math.max(sessionTotalSaved, dbClicks);
-        sessionClicksCache[id] = sessionTotalSaved;
-    }
-    
-    document.getElementById("ins-dedicated").innerText = "مُهدى إلى: " + dedicated;
-    document.getElementById("ins-intention").innerText = "النية: " + intention;
-    document.getElementById("ins-dhikr-text").innerText = adhkars[dhikrIndex];
-    document.getElementById("ins-my-clicks").innerText = formatNum(sessionTotalSaved);
-    
-    document.getElementById("ins-participants-list").innerHTML = "<div style='text-align:center; font-size:14px;'>جاري تحميل المشاركين...</div>";
-    document.getElementById("ins-participants-count").innerText = "0";
+  document.getElementById("btn-execute-send").onclick = async () => {
+      let to = document.getElementById("tx-to").value.toUpperCase().trim();
+      let amt = parseFloat(document.getElementById("tx-amount").value);
+      const curr = document.getElementById("tx-currency").value;
+      const st = document.getElementById("tx-status");
+      
+      if (curr === 'USDT') amt = Math.floor(amt);
 
-    const diff = new Date(expiresAt) - new Date();
-    if (diff <= 0) {
-        document.getElementById("ins-timer").innerText = "المجلس انتهى";
-    } else {
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        let timeStr = "";
-        if (d > 0) timeStr += d + " يوم و ";
-        timeStr += h + " ساعة";
-        document.getElementById("ins-timer").innerText = "ينتهي بعد: " + timeStr;
-    }
+      if (!to.startsWith("OLA")) to = "OLA " + to;
+      if(!to || !amt || amt <= 0) return alert("الرجاء إدخال رقم المستلم والمبلغ بشكل صحيح");
+      st.textContent = "جاري التحويل...";
+      
+      const { data: rec } = await client.from("profiles").select("*").eq("ola_id", to).single();
+      if(!rec) return st.textContent = "❌ المستلم غير موجود";
 
-    document.querySelectorAll(".view").forEach(el => el.classList.add("hidden"));
-    document.getElementById("view-inside-session").classList.remove("hidden");
-    
-    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-    const navEl = document.querySelector(`.nav-item[onclick="switchTab('sessions')"]`);
-    if(navEl) navEl.classList.add("active");
+      let feeInOla;
+      
+      if(curr === 'OLA') {
+          feeInOla = Number((amt * 0.02).toFixed(4));
+          const totalCost = amt + feeInOla;
+          if(totalCost > currentBalance) return st.textContent = `❌ رصيد غير كافٍ`;
+          
+          await client.from("profiles").update({ balance: currentBalance - totalCost }).eq("ola_id", currentOla);
+          await client.from("profiles").update({ balance: Number(rec.balance) + amt }).eq("ola_id", to);
+          currentBalance -= totalCost;
+      } else if (curr === 'USDT') {
+          let feeInUsdt = amt * 0.02;
+          feeInOla = feeInUsdt / OLA_FIXED_PRICE; 
+          
+          if(amt > currentUsdt) return st.textContent = `❌ رصيد USDT غير كافٍ`;
+          if(currentBalance < feeInOla) return st.textContent = `❌ رصيد OLA غير كافٍ لدفع الرسوم (${formatCleanNumber(feeInOla)} OLA)`;
+          
+          await client.from("profiles").update({ usdt_balance: currentUsdt - amt, balance: currentBalance - feeInOla }).eq("ola_id", currentOla);
+          await client.from("profiles").update({ usdt_balance: Number(rec.usdt_balance) + amt }).eq("ola_id", to);
+          currentUsdt -= amt;
+          currentBalance -= feeInOla;
+      } else {
+          let tokenPriceUsdt = getPriceInUsdt(curr);
+          if (tokenPriceUsdt > 0) {
+              feeInOla = (amt * tokenPriceUsdt * 0.02) / OLA_FIXED_PRICE;
+          } else {
+              feeInOla = Math.ceil(amt * 0.02);
+          }
+          
+          if(amt > (customTokens[curr] || 0)) return st.textContent = `❌ رصيد غير كافٍ`;
+          if(currentBalance < feeInOla) return st.textContent = `❌ رصيد OLA غير كافٍ للرسوم (${formatCleanNumber(feeInOla)} OLA)`;
+          
+          await client.from("token_balances").update({ balance: customTokens[curr] - amt }).match({ ola_id: currentOla, symbol: curr });
+          await client.from("profiles").update({ balance: currentBalance - feeInOla }).eq("ola_id", currentOla);
+          currentBalance -= feeInOla;
+          
+          const { data: recToken } = await client.from("token_balances").select("*").match({ ola_id: to, symbol: curr }).maybeSingle();
+          if(recToken) await client.from("token_balances").update({ balance: Number(recToken.balance) + amt }).match({ ola_id: to, symbol: curr });
+          else await client.from("token_balances").insert([{ ola_id: to, symbol: curr, balance: amt }]);
+      }
+      
+      const { data: txData } = await client.from("transactions").insert([{ from_ola: currentOla, to_ola: to, amount: amt, fee: feeInOla, action: `تحويل (${curr})`, currency: curr }]).select("id").single();
+      await updateDash();
+      st.textContent = "✅ تم التحويل!";
+      document.getElementById("tx-amount").value = "";
+      document.getElementById("tx-to").value = "";
+      document.getElementById("rec-tx").textContent = txData ? txData.id : "PENDING";
+      document.getElementById("rec-to").textContent = to;
+      document.getElementById("rec-amount").textContent = `${curr === 'USDT' ? Math.floor(amt).toLocaleString('en-US') : amt} ${curr}`;
+      document.getElementById("rec-fee").textContent = `${formatCleanNumber(feeInOla)} OLA`;
+      document.getElementById("receipt-modal").classList.remove("hidden");
+  };
 
-    loadSessionParticipants();
-};
+  function calculateDirectSwap(symbol, type, amountIn) {
+      if(symbol === 'OLA') { let out = type === 'buy' ? amountIn / OLA_FIXED_PRICE : amountIn * OLA_FIXED_PRICE; return { out, newUsdt: null, newCoin: null, error: null }; }
+      let liq = marketLiquidityData[symbol];
+      if(!liq) return { out: 0, error: `لا توجد سيولة للعملة` };
+      let usdt_res = Number(liq.usdt_reserve), coin_res = Number(liq.coin_reserve);
+      if(liq.type === 'fixed') {
+          let price = usdt_res / coin_res;
+          let out = type === 'buy' ? amountIn / price : amountIn * price;
+          if(type === 'buy' && out > coin_res) return { error: `سيولة لا تكفي` };
+          if(type === 'sell' && out > usdt_res) return { error: `سيولة لا تكفي` };
+          return { out: out, newUsdt: usdt_res + (type==='buy'?amountIn:-out), newCoin: coin_res + (type==='buy'?-out:amountIn), error: null };
+      } else {
+          let k = usdt_res * coin_res;
+          if(type === 'buy') {
+              let newUsdt = usdt_res + amountIn, newCoin = k / newUsdt, out = coin_res - newCoin;
+              if(out <= 0 || out >= coin_res) return { error: `سيولة لا تكفي` };
+              return { out, newUsdt, newCoin, error: null };
+          } else {
+              let newCoin = coin_res + amountIn, newUsdt = k / newCoin, out = usdt_res - newUsdt;
+              if(out <= 0 || out >= usdt_res) return { error: `سيولة لا تكفي` };
+              return { out, newUsdt, newCoin, error: null };
+          }
+      }
+  }
 
-window.exitSession = async () => {
-    switchTab('sessions');
-};
+  function calculateComplexSwap(fromSymbol, toSymbol, amountIn) {
+      if(!amountIn || amountIn <= 0) return { out: 0, error: null };
+      if(fromSymbol === toSymbol) return { error: "اختر عملتين مختلفتين" };
+      if(fromSymbol === 'USDT') return calculateDirectSwap(toSymbol, 'buy', amountIn);
+      if(toSymbol === 'USDT') return calculateDirectSwap(fromSymbol, 'sell', amountIn);
+      let step1 = calculateDirectSwap(fromSymbol, 'sell', amountIn);
+      if(step1.error) return { error: step1.error };
+      let step2 = calculateDirectSwap(toSymbol, 'buy', step1.out);
+      if(step2.error) return { error: step2.error };
+      return { out: step2.out, step1Data: step1, step2Data: step2, error: null };
+  }
 
-window.closeSession = async (sessionId) => {
-    const btn = event.target;
-    btn.innerText = "⏳ جاري الإغلاق..."; btn.disabled = true;
+  function updateSwapEstimate() {
+      let amt = parseFloat(document.getElementById("swap-amount").value) || 0;
+      const fromCoin = document.getElementById("swap-from").value;
+      const toCoin = document.getElementById("swap-to").value;
+      const rateDisplay = document.getElementById("swap-rate-display");
+      const receiveDisplay = document.getElementById("swap-receive");
+      const feeDisplay = document.getElementById("swap-fee-display");
+      
+      if (fromCoin === 'USDT') amt = Math.floor(amt);
 
-    await client.from("special_sessions").update({ is_claimed: true }).eq("id", sessionId);
-    
-    alert(`✅ تم إغلاق المجلس بنجاح!`);
-    loadSessions();
-};
+      if(fromCoin === toCoin) { 
+          receiveDisplay.textContent = "يرجى اختيار عملتين مختلفتين"; 
+          feeDisplay.textContent = "0 OLA";
+          return; 
+      }
 
-window.showUserProfile = async function(targetOla, name, avatarUrl) {
-    if (targetOla === OLA_ID) return;
-    
-    currentTargetUser = targetOla;
-    document.getElementById("um-name").innerText = name;
-    document.getElementById("um-ola").innerText = targetOla;
-    document.getElementById("um-avatar").src = avatarUrl;
-    document.getElementById("um-total").innerText = "⏳..."; 
-    
-    updateFollowBtnUI();
-    document.getElementById("user-info-modal").classList.remove("hidden");
+      let fromUsdtPrice = getPriceInUsdt(fromCoin);
+      let amountInUsdt = amt * fromUsdtPrice;
+      let feeInUsdt = amountInUsdt * 0.02;
+      let feeInOla = feeInUsdt / OLA_FIXED_PRICE;
+      feeDisplay.textContent = formatCleanNumber(feeInOla, 2) + " OLA";
 
-    try {
-        const { data } = await client.from("adhkar_counters").select("total_dhikr").eq("ola_id", targetOla).single();
-        document.getElementById("um-total").innerText = data ? formatNum(data.total_dhikr) : "0";
-    } catch (e) {
-        document.getElementById("um-total").innerText = "غير متوفر";
-    }
-};
+      const calc = calculateComplexSwap(fromCoin, toCoin, amt);
+      if(calc.error) { 
+          receiveDisplay.textContent = calc.error; 
+          receiveDisplay.style.color = "var(--danger)"; 
+      } else {
+          let displayOut = calc.out;
+          if (toCoin === 'USDT') displayOut = Math.floor(displayOut);
 
-window.closeUserModal = function() {
-    document.getElementById("user-info-modal").classList.add("hidden");
-    currentTargetUser = null;
-};
+          receiveDisplay.textContent = (toCoin === 'USDT' ? displayOut.toLocaleString('en-US') : formatCleanNumber(displayOut, 4)) + " " + toCoin;
+          receiveDisplay.style.color = "var(--ok)";
+          if(amt > 0) rateDisplay.textContent = `1 ${fromCoin} ≈ ${formatCleanNumber(calc.out / amt, 6)} ${toCoin}`;
+      }
+  }
+  document.getElementById("swap-amount").addEventListener("input", updateSwapEstimate);
 
-function updateFollowBtnUI() {
-    const btn = document.getElementById("btn-toggle-follow");
-    if (myFollows.includes(currentTargetUser)) {
-        btn.innerText = "إلغاء المتابعة ❌";
-        btn.classList.add("outline");
-        btn.classList.add("danger");
-    } else {
-        btn.innerText = "متابعة 🤝";
-        btn.className = ""; 
-    }
-}
+  document.getElementById("btn-execute-swap").onclick = async () => {
+      let amt = parseFloat(document.getElementById("swap-amount").value);
+      const fromCoin = document.getElementById("swap-from").value;
+      const toCoin = document.getElementById("swap-to").value;
+      const st = document.getElementById("swap-status");
+      
+      if (fromCoin === 'USDT') amt = Math.floor(amt);
+      if(!amt || amt <= 0 || fromCoin === toCoin) return;
+      
+      let fromUsdtPrice = getPriceInUsdt(fromCoin);
+      if(fromUsdtPrice <= 0) return st.textContent = "❌ خطأ في تسعير العملة";
+      let amountInUsdt = amt * fromUsdtPrice;
+      let feeInUsdt = amountInUsdt * 0.02;
+      let feeInOla = feeInUsdt / OLA_FIXED_PRICE; 
 
-window.toggleFollow = async function() {
-    if(!currentTargetUser) return;
-    const btn = document.getElementById("btn-toggle-follow");
-    btn.disabled = true;
-    
-    if (myFollows.includes(currentTargetUser)) {
-        await client.from("follows").delete().match({ follower_ola: OLA_ID, following_ola: currentTargetUser });
-        myFollows = myFollows.filter(id => id !== currentTargetUser);
-    } else {
-        await client.from("follows").insert([{ follower_ola: OLA_ID, following_ola: currentTargetUser }]);
-        myFollows.push(currentTargetUser);
-    }
-    
-    updateFollowBtnUI();
-    btn.disabled = false;
-};
+      const calc = calculateComplexSwap(fromCoin, toCoin, amt);
+      if(calc.error) return st.textContent = "❌ " + calc.error;
 
-async function loadRanking() {
-    try {
-        const rankingContainer = document.getElementById("ranking-list");
-        rankingContainer.innerHTML = "<div style='text-align:center; padding:20px;'>جاري التحميل... ⏳</div>";
-        
-        const { data, error } = await client.from("adhkar_counters").select("ola_id, total_dhikr").order("total_dhikr", { ascending: false }).limit(50);
-        if (error) throw error;
-        
-        if (!data || data.length === 0) return rankingContainer.innerHTML = "<div style='text-align:center; padding:20px;'>لا يوجد ذاكرين حتى الآن.</div>";
-        
-        const ids = data.map(d => d.ola_id).filter(id => id);
-        const profMap = {};
-        
-        if (ids.length > 0) {
-            const { data: profs } = await client.from("profiles").select("ola_id, full_name, avatar_url").in("ola_id", ids);
-            if (profs) profs.forEach(p => profMap[p.ola_id] = p);
-        }
+      let outAmount = calc.out;
+      if (toCoin === 'USDT') {
+          outAmount = Math.floor(outAmount);
+          if (outAmount <= 0) return st.textContent = "❌ الكمية المستلمة صغيرة جداً";
+      }
 
-        let html = "";
-        data.forEach((d, i) => {
-            if (!d.ola_id) return;
-            const prof = profMap[d.ola_id] || { full_name: "مستخدم OLA", avatar_url: null };
-            const isMe = (d.ola_id === OLA_ID);
-            
-            const avatarSrc = prof.avatar_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' fill='%23e8f5e9'/%3E%3Ctext x='50%25' y='50%25' fill='%231b5e20' font-size='20' font-family='Arial' text-anchor='middle' dy='.3em'%3E%D8%9F%3C/text%3E%3C/svg%3E";
-            
-            const safeName = prof.full_name ? prof.full_name.replace(/'/g, "\\'") : "مستخدم OLA";
+      if (fromCoin === 'OLA') {
+          let totalCost = amt + feeInOla;
+          if (currentBalance < totalCost) {
+              if (currentBalance + 0.1 >= totalCost) {
+                  feeInOla = currentBalance - amt; 
+              } else {
+                  return st.textContent = `❌ رصيد OLA غير كافٍ لدفع المبلغ والرسوم`;
+              }
+          }
+      } else {
+          if (toCoin === 'OLA') {
+              if (calc.out + currentBalance < feeInOla) {
+                  return st.textContent = `❌ الكمية المشتراة من OLA لا تكفي لتغطية الرسوم`;
+              }
+          } else {
+              if (currentBalance < feeInOla) {
+                  if (currentBalance + 0.1 >= feeInOla) {
+                      feeInOla = currentBalance;
+                  } else {
+                      return st.textContent = `❌ رصيد OLA غير كافٍ لدفع رسوم التداول (${formatCleanNumber(feeInOla)} OLA)`;
+                  }
+              }
+          }
+          
+          let srcBal = (fromCoin === 'USDT') ? currentUsdt : (customTokens[fromCoin]||0);
+          if (srcBal < amt) return st.textContent = "❌ رصيد غير كافٍ للتبديل";
+      }
 
-            let actionBtn = isMe 
-                ? `<span style="color:var(--accent); font-weight:bold; font-size:14px;">(أنت)</span>` 
-                : `<button onclick="showUserProfile('${d.ola_id}', '${safeName}', '${avatarSrc}')" class="outline" style="padding:6px 12px; font-size:12px; border-radius:8px; width:auto;">عرض الحساب 👤</button>`;
+      st.textContent = "⏳ جاري التنفيذ...";
 
-            html += `<div class="rank-item ${isMe ? 'is-me' : ''}">
-                <div style="display:flex; align-items:center; gap:12px; flex:1;">
-                    <div class="rank-num">${formatNum(i + 1)}</div>
-                    <img src="${avatarSrc}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--gold);">
-                    <div>
-                        <div style="font-size:16px; font-weight:bold;">${prof.full_name}</div>
-                        <div style="font-size:12px; color:var(--text-main);" class="en-num">${d.ola_id}</div>
-                    </div>
-                </div>
-                <div style="text-align:left; min-width:80px; display:flex; flex-direction:column; gap:8px;">
-                    <div style="color:var(--text-main); font-weight:bold; font-size:14px;"><span class="en-num">${formatNum(d.total_dhikr)}</span> تسبيحة</div>
-                    ${actionBtn}
-                </div>
-            </div>`;
-        });
-        rankingContainer.innerHTML = html;
-    } catch (err) {}
-}
+      if(fromCoin === 'USDT') currentUsdt -= amt; else if(fromCoin === 'OLA') currentBalance -= amt; else customTokens[fromCoin] -= amt;
+      
+      if(toCoin === 'USDT') currentUsdt += outAmount; else if(toCoin === 'OLA') currentBalance += outAmount; else customTokens[toCoin] = (customTokens[toCoin] || 0) + outAmount;
+      
+      currentBalance -= feeInOla;
 
-function updateProfileUI() {
-    if(!userProfile) return;
-    document.getElementById("prof-name").innerText = userProfile.full_name || "مستخدم OLA";
-    document.getElementById("prof-ola").innerText = userProfile.ola_id;
-    document.getElementById("prof-total").innerText = formatNum(dhikrData.total_dhikr);
+      await client.from("profiles").update({ balance: currentBalance, usdt_balance: currentUsdt }).eq("ola_id", currentOla);
+      if(fromCoin !== 'USDT' && fromCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: fromCoin, balance: customTokens[fromCoin] }, { onConflict: 'ola_id,symbol' });
+      if(toCoin !== 'USDT' && toCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: toCoin, balance: customTokens[toCoin] }, { onConflict: 'ola_id,symbol' });
 
-    const isVIP = checkIsVIP();
-    const subStatus = isVIP ? "مشترك VIP 🌟" : "حساب مجاني ⏳";
+      if(fromCoin === 'USDT' || toCoin === 'USDT') {
+          let targetCoin = fromCoin === 'USDT' ? toCoin : fromCoin;
+          if(targetCoin !== 'OLA' && calc.newUsdt !== null && calc.newCoin !== null) await client.from("coin_liquidity").update({ usdt_reserve: calc.newUsdt, coin_reserve: calc.newCoin }).eq("coin_symbol", targetCoin);
+      } else {
+          if(fromCoin !== 'OLA' && calc.step1Data) await client.from("coin_liquidity").update({ usdt_reserve: calc.step1Data.newUsdt, coin_reserve: calc.step1Data.newCoin }).eq("coin_symbol", fromCoin);
+          if(toCoin !== 'OLA' && calc.step2Data) await client.from("coin_liquidity").update({ usdt_reserve: calc.step2Data.newUsdt, coin_reserve: calc.step2Data.newCoin }).eq("coin_symbol", toCoin);
+      }
 
-    document.getElementById("prof-vip").innerText = subStatus;
-    
-    if(isVIP){
-        document.getElementById("prof-vip").style.color = "var(--gold)";
-        document.getElementById("prof-vip").style.fontWeight = "bold";
-    } else {
-        document.getElementById("prof-vip").style.color = "var(--text-main)";
-        document.getElementById("prof-vip").style.fontWeight = "normal";
-    }
-}
+      const { data: txData } = await client.from("transactions").insert([{ 
+          from_ola: currentOla, 
+          to_ola: "نظام التداول", 
+          amount: amt, 
+          fee: feeInOla, 
+          action: `تداول`, 
+          currency: `${fromCoin} -> ${toCoin}` 
+      }]).select("id").single();
 
-function switchTab(tab) {
-    if (activeSessionId) {
-        syncData(activeSessionId); 
-        activeSessionId = null;
-    } else {
-        syncData();
-    }
-    
-    document.querySelectorAll(".view").forEach(el => el.classList.add("hidden"));
-    document.getElementById("view-" + tab).classList.remove("hidden");
-    
-    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-    const navEl = document.querySelector(`.nav-item[onclick="switchTab('${tab}')"]`);
-    if(navEl) navEl.classList.add("active");
+      await updateDash(); await fetchMarketLiquidity();
+      st.textContent = "✅ تمت العملية بنجاح!";
+      document.getElementById("swap-amount").value = "";
 
-    if(tab === 'ranking') loadRanking();
-    if(tab === 'sessions') loadSessions();
-    if(tab === 'profile') updateProfileUI();
-}
-
-window.onload = function() {
-    if(localStorage.getItem("ola_id")) {
-        init();
-    } else {
-        document.getElementById("login-screen").classList.remove("hidden");
-        document.getElementById("app-content").classList.add("hidden");
-        document.getElementById("bottom-nav").classList.add("hidden");
-    }
-};
+      document.getElementById("rec-swap-tx").textContent = txData ? txData.id : "PENDING";
+      document.getElementById("rec-swap-pair").textContent = `${fromCoin} ➔ ${toCoin}`;
+      document.getElementById("rec-swap-paid").textContent = `${fromCoin === 'USDT' ? Math.floor(amt).toLocaleString('en-US') : formatCleanNumber(amt)} ${fromCoin}`;
+      document.getElementById("rec-swap-received").textContent = `${toCoin === 'USDT' ? Math.floor(outAmount).toLocaleString('en-US') : formatCleanNumber(outAmount)} ${toCoin}`;
+      document.getElementById("rec-swap-fee").textContent = `${formatCleanNumber(feeInOla)} OLA`;
+      document.getElementById("swap-receipt-modal").classList.remove("hidden");
+  };
 </script>
 </body>
 </html>
