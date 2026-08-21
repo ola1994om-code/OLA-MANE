@@ -7,17 +7,9 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
   :root { 
-    --bg: #07224e; 
-    --bg2: #0a2e6d; 
-    --card: #0e3d94; 
-    --card-inner: rgba(0, 0, 0, 0.28);
-    --ink: #f1f5ff; 
-    --muted: #9bb7e8; 
-    --brand: #d4af37; 
-    --ok: #22c55e; 
-    --danger: #ef4444; 
-    --line: rgba(212, 175, 55, 0.25); 
-    --warn: #f59e0b;
+    --bg: #07224e; --bg2: #0a2e6d; --card: #0e3d94; --card-inner: rgba(0, 0, 0, 0.28);
+    --ink: #f1f5ff; --muted: #9bb7e8; --brand: #d4af37; --ok: #22c55e; --danger: #ef4444; 
+    --line: rgba(212, 175, 55, 0.25); --warn: #f59e0b;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: system-ui, -apple-system, Tahoma, sans-serif; background: linear-gradient(135deg, var(--bg), var(--bg2)); color: var(--ink); padding: 15px; min-height: 100vh;}
@@ -139,13 +131,11 @@
       <input id="in-pass" type="password" placeholder="كلمة السر"/>
       <input id="in-pass-confirm" type="password" placeholder="تأكيد كلمة السر"/>
     </div>
-    
     <div class="banner">
       <h4 style="margin:0 0 6px 0; color:var(--warn); font-size:14px;">سؤال الأمان الإلزامي</h4>
       <div style="font-weight:bold; margin-bottom:8px; font-size:14px;" id="lbl-sec-q">جاري التوليد...</div>
       <input id="in-sec-a" placeholder="أدخل إجابتك هنا" style="background:rgba(0,0,0,0.5);">
     </div>
-
     <button id="btn-register">إنشاء الحساب والمحفظة</button>
     <button id="btn-cancel-register" class="ghost danger">رجوع</button>
     <div id="reg-status" style="margin-top:8px; text-align:center; font-weight:bold; color:var(--warn);"></div>
@@ -182,7 +172,7 @@
         <button class="btn-max" id="btn-max-send" type="button">MAX</button>
         <input id="tx-amount" type="number" step="any" placeholder="المبلغ المراد إرساله" dir="ltr" style="text-align:right;">
       </div>
-      <div style="font-size:12px; color:var(--warn); margin-bottom:10px;">* سيتم خصم 2% رسوم شبكة. (يذهب 1% منها لمالك العملة وتتراكم في صندوقه).</div>
+      <div style="font-size:12px; color:var(--warn); margin-bottom:10px;">* سيتم خصم 2% رسوم شبكة بعملة OLA. (يذهب 1% منها لمالك العملة وتتراكم في صندوقه).</div>
       <button id="btn-execute-send">إرسال الآن</button>
       <div id="tx-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
     </div>
@@ -358,7 +348,6 @@
       setTimeout(() => { performLogin(ola, pass); }, 1500);
   };
 
-  // ميزة النفق الآمن للإعلانات عند دخول المحفظة
   async function showAdTunnel(onComplete) {
       try {
           const res = await fetch(SUPABASE_URL + '/rest/v1/ola_ads?active=eq.true&select=*', { 
@@ -380,6 +369,11 @@
           badge.style.cssText = 'position:absolute; top:20px; left:20px; background:rgba(212,175,55,0.9); color:#000; padding:6px 12px; border-radius:6px; font-family:Tahoma, sans-serif; font-size:12px; font-weight:bold; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.3); z-index:1000000;';
           badge.onclick = (e) => { e.stopPropagation(); window.open('https://ola1994om-code.github.io/OLA12/', '_blank'); };
           overlay.appendChild(badge);
+
+          const thankYouMsg = document.createElement('div');
+          thankYouMsg.innerText = 'شريكنا العزيز.. شكراً لاستخدامك منصات OLA الرقمية لبناء المستقبل.';
+          thankYouMsg.style.cssText = 'position:absolute; top:80px; width:90%; text-align:center; color:#d4af37; font-size:18px; font-weight:bold; text-shadow:0 2px 4px rgba(0,0,0,0.8); z-index:1000000; line-height:1.5; font-family:Tahoma, sans-serif; animation: fadeInOut 5s ease-in-out;';
+          overlay.appendChild(thankYouMsg);
 
           const timerUI = document.createElement('div');
           timerUI.style.cssText = 'position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.6); color:#fff; padding:8px 20px; border-radius:20px; font-family:Tahoma, sans-serif; font-size:16px; font-weight:bold; border:1px solid #fff; z-index:1000000; direction:ltr;';
@@ -437,7 +431,7 @@
               if(timerInterval) clearInterval(timerInterval);
               timerInterval = setInterval(() => {
                   timeLeft--;
-                  if(timeLeft <= 0) { clearInterval(timerInterval); timerUI.style.display = 'none'; skipBtn.style.display = 'block'; }
+                  if(timeLeft <= 0) { clearInterval(timerInterval); timerUI.style.display = 'none'; skipBtn.style.display = 'block'; thankYouMsg.style.display = 'none'; }
                   else { timerUI.innerText = timeLeft; }
               }, 1000);
           }
@@ -735,7 +729,7 @@
 
       if (!to.startsWith("OLA")) to = "OLA " + to;
       if(!to || !amt || amt <= 0) return alert("الرجاء إدخال رقم المستلم والمبلغ بشكل صحيح");
-      st.textContent = "جاري التحويل وتوزيع الأرباح للصناديق...";
+      st.textContent = "جاري التحويل وتوزيع الأرباح...";
       
       const { data: rec } = await client.from("profiles").select("*").eq("ola_id", to).single();
       if(!rec) return st.textContent = "❌ المستلم غير موجود";
@@ -781,18 +775,21 @@
           else await client.from("token_balances").insert([{ ola_id: to, symbol: curr, balance: amt }]);
       }
       
-      // توجيه الأرباح لصندوق أرباح مالك العملة (وليس للرصيد مباشرة)
+      // نظام الخزنة الذكي: توجيه الأرباح لصندوق أرباح العملة بشكل مستقل وآمن
       if (curr !== 'OLA' && curr !== 'USDT') {
           let halfFee = feeInOla / 2;
-          const { data: coinRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", curr).maybeSingle();
-          if (coinRow) {
-              await client.from("custom_coins").update({ profits_ola: Number(coinRow.profits_ola || 0) + halfFee }).eq("symbol", curr);
+          let vaultId = `PROFIT_${curr}`;
+          const { data: vRow } = await client.from("token_balances").select("balance").match({ ola_id: vaultId, symbol: 'OLA' }).maybeSingle();
+          if (vRow) {
+              await client.from("token_balances").update({ balance: Number(vRow.balance) + halfFee }).match({ ola_id: vaultId, symbol: 'OLA' });
+          } else {
+              await client.from("token_balances").insert([{ ola_id: vaultId, symbol: 'OLA', balance: halfFee }]);
           }
       }
 
       const { data: txData } = await client.from("transactions").insert([{ from_ola: currentOla, to_ola: to, amount: amt, fee: feeInOla, action: `تحويل (${curr})`, currency: curr }]).select("id").single();
       await updateDash();
-      st.textContent = "✅ تم التحويل بنجاح وتراكمت الأرباح!";
+      st.textContent = "✅ تم التحويل وتراكمت الأرباح للملاك!";
       document.getElementById("tx-amount").value = "";
       document.getElementById("tx-to").value = "";
       document.getElementById("rec-tx").textContent = txData ? txData.id : "PENDING";
@@ -912,7 +909,7 @@
           if (srcBal < amt) return st.textContent = "❌ رصيد غير كافٍ للتبديل";
       }
 
-      st.textContent = "⏳ جاري التنفيذ وتوزيع الأرباح للصناديق...";
+      st.textContent = "⏳ جاري التنفيذ وتوزيع الأرباح...";
 
       // خصم الأرصدة وإضافتها
       if(fromCoin === 'USDT') currentUsdt -= amt; else if(fromCoin === 'OLA') currentBalance -= amt; else customTokens[fromCoin] -= amt;
@@ -923,16 +920,21 @@
       if(fromCoin !== 'USDT' && fromCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: fromCoin, balance: customTokens[fromCoin] }, { onConflict: 'ola_id,symbol' });
       if(toCoin !== 'USDT' && toCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: toCoin, balance: customTokens[toCoin] }, { onConflict: 'ola_id,symbol' });
 
-      // توجيه الأرباح للصناديق وليس للرصيد المباشر (1% لكل طرف)
+      // نظام الخزنة الذكي: توجيه الأرباح للصناديق (1% لكل عملة تم التداول بها)
       let halfFee = feeInOla / 2;
-      if (fromCoin !== 'OLA' && fromCoin !== 'USDT') {
-          const { data: cRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", fromCoin).maybeSingle();
-          if(cRow) await client.from("custom_coins").update({ profits_ola: Number(cRow.profits_ola || 0) + halfFee }).eq("symbol", fromCoin);
-      }
-      if (toCoin !== 'OLA' && toCoin !== 'USDT') {
-          const { data: cRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", toCoin).maybeSingle();
-          if(cRow) await client.from("custom_coins").update({ profits_ola: Number(cRow.profits_ola || 0) + halfFee }).eq("symbol", toCoin);
-      }
+      const addSmartProfit = async (sym) => {
+          if (sym !== 'OLA' && sym !== 'USDT') {
+              let vaultId = `PROFIT_${sym}`;
+              const { data: vRow } = await client.from("token_balances").select("balance").match({ ola_id: vaultId, symbol: 'OLA' }).maybeSingle();
+              if (vRow) {
+                  await client.from("token_balances").update({ balance: Number(vRow.balance) + halfFee }).match({ ola_id: vaultId, symbol: 'OLA' });
+              } else {
+                  await client.from("token_balances").insert([{ ola_id: vaultId, symbol: 'OLA', balance: halfFee }]);
+              }
+          }
+      };
+      await addSmartProfit(fromCoin);
+      await addSmartProfit(toCoin);
 
       // تحديث مجمعات السيولة
       if(fromCoin === 'USDT' || toCoin === 'USDT') {
@@ -953,7 +955,7 @@
       }]).select("id").single();
 
       await updateDash(); await fetchMarketLiquidity();
-      st.textContent = "✅ تمت العملية بنجاح وتراكمت الأرباح للملاك!";
+      st.textContent = "✅ تمت العملية وتراكمت الأرباح لملاك العملات!";
       document.getElementById("swap-amount").value = "";
 
       document.getElementById("rec-swap-tx").textContent = txData ? txData.id : "PENDING";
