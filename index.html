@@ -182,7 +182,7 @@
         <button class="btn-max" id="btn-max-send" type="button">MAX</button>
         <input id="tx-amount" type="number" step="any" placeholder="المبلغ المراد إرساله" dir="ltr" style="text-align:right;">
       </div>
-      <div style="font-size:12px; color:var(--warn); margin-bottom:10px;">* سيتم خصم 2% رسوم شبكة بعملة OLA. (يذهب 1% لمالك العملة إن وجدت).</div>
+      <div style="font-size:12px; color:var(--warn); margin-bottom:10px;">* سيتم خصم 2% رسوم شبكة. (يذهب 1% منها لمالك العملة وتتراكم في صندوقه).</div>
       <button id="btn-execute-send">إرسال الآن</button>
       <div id="tx-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
     </div>
@@ -212,7 +212,7 @@
             </div>
         </div>
       </div>
-      <div style="font-size:12px; color:var(--warn); margin-bottom:10px; text-align: center;">تُوزع الرسوم (1% لمالك العملة المدفوعة، 1% لمالك المستلمة).</div>
+      <div style="font-size:12px; color:var(--warn); margin-bottom:10px; text-align: center;">تُوزع الرسوم وتُخزّن مباشرة في صناديق أرباح ملاك العملات (1% لكل طرف).</div>
       <button id="btn-execute-swap" style="background:var(--ok); color:white;">تنفيذ عملية التداول</button>
       <div id="swap-status" style="text-align:center; font-size:14px; margin-top:10px;"></div>
     </div>
@@ -358,6 +358,7 @@
       setTimeout(() => { performLogin(ola, pass); }, 1500);
   };
 
+  // ميزة النفق الآمن للإعلانات عند دخول المحفظة
   async function showAdTunnel(onComplete) {
       try {
           const res = await fetch(SUPABASE_URL + '/rest/v1/ola_ads?active=eq.true&select=*', { 
@@ -366,7 +367,7 @@
           let ads = await res.json();
           if (!ads || ads.length === 0) { if(onComplete) onComplete(); return; }
 
-          ads = ads.sort(() => 0.5 - Math.random()).slice(0, 2); 
+          ads = ads.sort(() => 0.5 - Math.random()).slice(0, 1); 
           let currentAdIndex = 0;
           let timerInterval = null;
 
@@ -390,7 +391,7 @@
 
           const visitBtn = document.createElement('button');
           visitBtn.innerText = '🌐 زيارة صفحة المعلن';
-          visitBtn.style.cssText = 'position:absolute; bottom:40px; padding:12px 25px; background:#0a2e6d; color:#ffffff; border:2px solid #d4af37; border-radius:30px; cursor:pointer; font-family:Tahoma, sans-serif; font-size:16px; font-weight:bold; display:block; box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:1000000; width:auto; max-width:90%; margin:0;';
+          visitBtn.style.cssText = 'position:absolute; bottom:40px; padding:12px 25px; background:#16a34a; color:#ffffff; border:2px solid #fff; border-radius:30px; cursor:pointer; font-family:Tahoma, sans-serif; font-size:16px; font-weight:bold; display:block; box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:1000000; width:auto; max-width:90%; margin:0;';
           overlay.appendChild(visitBtn);
 
           const unmuteBtn = document.createElement('button');
@@ -399,7 +400,7 @@
           overlay.appendChild(unmuteBtn);
 
           const mediaCont = document.createElement('div');
-          mediaCont.style.cssText = 'width:100%; height:75%; display:flex; justify-content:center; align-items:center; cursor:pointer;';
+          mediaCont.style.cssText = 'width:100%; height:60%; display:flex; justify-content:center; align-items:center; cursor:pointer; margin-top: 20px;';
           overlay.appendChild(mediaCont);
 
           function playCurrentAd() {
@@ -408,12 +409,12 @@
               skipBtn.style.display = 'none';
               timerUI.style.display = 'block';
               unmuteBtn.style.display = 'none';
-              skipBtn.innerText = (currentAdIndex === 0 && ads.length > 1) ? 'التالي ⏭' : 'تخطي ⏭';
+              skipBtn.innerText = 'دخول المحفظة ⏭';
 
               if (ad.ad_type === 'video') {
                   const vid = document.createElement('video');
                   vid.src = ad.media_url; 
-                  vid.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                  vid.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid var(--brand);';
                   vid.autoplay = true; vid.muted = true; vid.playsInline = true;
                   mediaCont.appendChild(vid);
                   unmuteBtn.style.display = 'flex';
@@ -421,7 +422,7 @@
               } else {
                   const img = document.createElement('img');
                   img.src = ad.media_url;
-                  img.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                  img.style.cssText = 'max-width:90%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid var(--brand);';
                   mediaCont.appendChild(img);
               }
 
@@ -431,7 +432,7 @@
                   if (currentAdIndex < ads.length) playCurrentAd(); else { document.body.removeChild(overlay); if(onComplete) onComplete(); }
               };
 
-              let timeLeft = 5;
+              let timeLeft = 6;
               timerUI.innerText = timeLeft;
               if(timerInterval) clearInterval(timerInterval);
               timerInterval = setInterval(() => {
@@ -446,14 +447,17 @@
 
   async function performLogin(ola, pass) {
       const st = document.getElementById("login-status");
-      st.textContent = "⏳ جارٍ التحقق...";
+      st.textContent = "⏳ جارٍ التحقق من الحساب...";
+      
       const { data } = await client.from("profiles").select("*").eq("ola_id", ola).single();
+      
       if(data && data.password === pass) {
           currentOla = data.ola_id; 
           currentBalance = Number(data.balance) || 0; 
           currentUsdt = Number(data.usdt_balance) || 0;
           localStorage.setItem("ola_wallet_session", JSON.stringify({ola_id: ola, pass: pass}));
-          st.textContent = "⏳ يتم توجيهك الآن عبر النفق الآمن...";
+          
+          st.textContent = "⏳ يتم توجيهك للمحفظة عبر النفق الآمن...";
           
           showAdTunnel(async () => {
               document.getElementById("login-view").classList.add("hidden");
@@ -463,7 +467,7 @@
               await fetchMarketLiquidity();
           });
       } else { 
-          st.textContent = "❌ بيانات غير صحيحة"; 
+          st.textContent = "❌ بيانات الدخول غير صحيحة."; 
           localStorage.removeItem("ola_wallet_session"); 
       }
   }
@@ -526,8 +530,7 @@
     document.getElementById("wallet-usdt").textContent = Math.floor(currentUsdt).toLocaleString('en-US') + " $";
     document.getElementById("wallet-id").textContent = currentOla;
 
-    // تم تحديث استدعاء البيانات لجلب owner_ola_id
-    const { data: listedCoins } = await client.from("custom_coins").select("symbol, logo, name, total_supply, owner_ola_id").eq("is_listed", true);
+    const { data: listedCoins } = await client.from("custom_coins").select("symbol, logo, name, owner_ola_id").eq("is_listed", true);
     listedCoinsCache = listedCoins || [];
     const listedData = {};
     let txOptions = [ { value: 'OLA', text: 'إرسال OLA', img: OLA_LOGO }, { value: 'USDT', text: 'إرسال USDT', img: USDT_LOGO } ];
@@ -732,20 +735,13 @@
 
       if (!to.startsWith("OLA")) to = "OLA " + to;
       if(!to || !amt || amt <= 0) return alert("الرجاء إدخال رقم المستلم والمبلغ بشكل صحيح");
-      st.textContent = "جاري التحويل...";
+      st.textContent = "جاري التحويل وتوزيع الأرباح للصناديق...";
       
       const { data: rec } = await client.from("profiles").select("*").eq("ola_id", to).single();
       if(!rec) return st.textContent = "❌ المستلم غير موجود";
 
       let feeInOla;
-      let ownerId = null;
 
-      // البحث عن مالك العملة لتوزيع الأرباح
-      if (curr !== 'OLA' && curr !== 'USDT') {
-          const coinObj = listedCoinsCache.find(c => c.symbol === curr);
-          if (coinObj && coinObj.owner_ola_id) ownerId = coinObj.owner_ola_id;
-      }
-      
       if(curr === 'OLA') {
           feeInOla = Number((amt * 0.02).toFixed(4));
           const totalCost = amt + feeInOla;
@@ -785,21 +781,18 @@
           else await client.from("token_balances").insert([{ ola_id: to, symbol: curr, balance: amt }]);
       }
       
-      // توزيع الأرباح على المالك (1% من إجمالي الـ 2%)
-      if (ownerId) {
-          let ownerShare = feeInOla / 2;
-          if (ownerId === currentOla) {
-              currentBalance += ownerShare; // إذا كان هو المالك نضيفها فوراً للرصيد المحلي
-              await client.from("profiles").update({ balance: currentBalance }).eq("ola_id", currentOla);
-          } else {
-              const { data: ownerProf } = await client.from("profiles").select("balance").eq("ola_id", ownerId).single();
-              if (ownerProf) await client.from("profiles").update({ balance: Number(ownerProf.balance) + ownerShare }).eq("ola_id", ownerId);
+      // توجيه الأرباح لصندوق أرباح مالك العملة (وليس للرصيد مباشرة)
+      if (curr !== 'OLA' && curr !== 'USDT') {
+          let halfFee = feeInOla / 2;
+          const { data: coinRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", curr).maybeSingle();
+          if (coinRow) {
+              await client.from("custom_coins").update({ profits_ola: Number(coinRow.profits_ola || 0) + halfFee }).eq("symbol", curr);
           }
       }
 
       const { data: txData } = await client.from("transactions").insert([{ from_ola: currentOla, to_ola: to, amount: amt, fee: feeInOla, action: `تحويل (${curr})`, currency: curr }]).select("id").single();
       await updateDash();
-      st.textContent = "✅ تم التحويل بنجاح!";
+      st.textContent = "✅ تم التحويل بنجاح وتراكمت الأرباح!";
       document.getElementById("tx-amount").value = "";
       document.getElementById("tx-to").value = "";
       document.getElementById("rec-tx").textContent = txData ? txData.id : "PENDING";
@@ -919,7 +912,7 @@
           if (srcBal < amt) return st.textContent = "❌ رصيد غير كافٍ للتبديل";
       }
 
-      st.textContent = "⏳ جاري التنفيذ وتوزيع الأرباح...";
+      st.textContent = "⏳ جاري التنفيذ وتوزيع الأرباح للصناديق...";
 
       // خصم الأرصدة وإضافتها
       if(fromCoin === 'USDT') currentUsdt -= amt; else if(fromCoin === 'OLA') currentBalance -= amt; else customTokens[fromCoin] -= amt;
@@ -930,36 +923,15 @@
       if(fromCoin !== 'USDT' && fromCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: fromCoin, balance: customTokens[fromCoin] }, { onConflict: 'ola_id,symbol' });
       if(toCoin !== 'USDT' && toCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: toCoin, balance: customTokens[toCoin] }, { onConflict: 'ola_id,symbol' });
 
-      // توزيع الأرباح (1% لكل مالك)
-      let fromOwner = null, toOwner = null;
-      const fCoinObj = listedCoinsCache.find(c => c.symbol === fromCoin);
-      const tCoinObj = listedCoinsCache.find(c => c.symbol === toCoin);
-      if(fCoinObj) fromOwner = fCoinObj.owner_ola_id;
-      if(tCoinObj) toOwner = tCoinObj.owner_ola_id;
-
-      let ownerShare = feeInOla / 2;
-      
-      const giveProfit = async (id, amount) => {
-          if (id === currentOla) {
-              currentBalance += amount;
-              await client.from("profiles").update({ balance: currentBalance }).eq("ola_id", currentOla);
-          } else {
-              const { data: prof } = await client.from("profiles").select("balance").eq("ola_id", id).single();
-              if (prof) await client.from("profiles").update({ balance: Number(prof.balance) + amount }).eq("ola_id", id);
-          }
-      };
-
-      if (fromOwner && toOwner) {
-          if (fromOwner !== toOwner) {
-              await giveProfit(fromOwner, ownerShare);
-              await giveProfit(toOwner, ownerShare);
-          } else {
-              await giveProfit(fromOwner, feeInOla); // يمتلك العملتين يأخذ 2%
-          }
-      } else if (fromOwner) {
-          await giveProfit(fromOwner, ownerShare);
-      } else if (toOwner) {
-          await giveProfit(toOwner, ownerShare);
+      // توجيه الأرباح للصناديق وليس للرصيد المباشر (1% لكل طرف)
+      let halfFee = feeInOla / 2;
+      if (fromCoin !== 'OLA' && fromCoin !== 'USDT') {
+          const { data: cRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", fromCoin).maybeSingle();
+          if(cRow) await client.from("custom_coins").update({ profits_ola: Number(cRow.profits_ola || 0) + halfFee }).eq("symbol", fromCoin);
+      }
+      if (toCoin !== 'OLA' && toCoin !== 'USDT') {
+          const { data: cRow } = await client.from("custom_coins").select("profits_ola").eq("symbol", toCoin).maybeSingle();
+          if(cRow) await client.from("custom_coins").update({ profits_ola: Number(cRow.profits_ola || 0) + halfFee }).eq("symbol", toCoin);
       }
 
       // تحديث مجمعات السيولة
@@ -981,7 +953,7 @@
       }]).select("id").single();
 
       await updateDash(); await fetchMarketLiquidity();
-      st.textContent = "✅ تمت العملية بنجاح وتوزيع الأرباح!";
+      st.textContent = "✅ تمت العملية بنجاح وتراكمت الأرباح للملاك!";
       document.getElementById("swap-amount").value = "";
 
       document.getElementById("rec-swap-tx").textContent = txData ? txData.id : "PENDING";
