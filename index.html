@@ -524,19 +524,22 @@
     document.getElementById("wallet-usdt").textContent = Math.floor(currentUsdt).toLocaleString('en-US') + " $";
     document.getElementById("wallet-id").textContent = currentOla;
 
-    const { data: listedCoins } = await client.from("custom_coins").select("symbol, logo, name, owner_ola_id").eq("is_listed", true);
-    listedCoinsCache = listedCoins || [];
-    const listedData = {};
+    const { data: allKnownCoins } = await client.from("custom_coins").select("symbol, logo, name, owner_ola_id, is_listed");
+    listedCoinsCache = (allKnownCoins || []).filter(c => c.is_listed); 
+    const allData = {};
     let txOptions = [ { value: 'OLA', text: 'إرسال OLA', img: OLA_LOGO }, { value: 'USDT', text: 'إرسال USDT', img: USDT_LOGO } ];
     let swapOptionsList = [ { value: 'USDT', text: 'USDT (الدولار الرقمي)', img: USDT_LOGO }, { value: 'OLA', text: 'OLA', img: OLA_LOGO } ];
     let marketBaseOptionsList = [ { value: 'USDT', text: 'USDT (الدولار)', img: USDT_LOGO }, { value: 'OLA', text: 'OLA', img: OLA_LOGO } ];
 
-    if(listedCoinsCache.length > 0) {
-        listedCoinsCache.forEach(c => { 
+    if(allKnownCoins && allKnownCoins.length > 0) {
+        allKnownCoins.forEach(c => { 
             let img = c.logo || DEF_LOGO;
-            listedData[c.symbol] = { logo: img, name: c.name }; 
-            swapOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
-            marketBaseOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
+            allData[c.symbol] = { logo: img, name: c.name, is_listed: c.is_listed }; 
+            
+            if(c.is_listed) {
+                swapOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
+                marketBaseOptionsList.push({ value: c.symbol, text: `${c.name} (${c.symbol})`, img: img });
+            }
         });
     }
 
@@ -548,16 +551,20 @@
     if(tokens && tokens.length > 0) {
         tokens.forEach(t => {
             let b = Number(t.balance) || 0;
-            if(b > 0 && listedData[t.symbol]) {
+            if(b > 0 && allData[t.symbol]) {
                 customTokens[t.symbol] = b;
-                let logoSrc = listedData[t.symbol].logo || DEF_LOGO;
+                let logoSrc = allData[t.symbol].logo || DEF_LOGO;
+                
+                let listedBadge = allData[t.symbol].is_listed ? "" : "<span style='color:var(--danger);font-size:10px;background:rgba(239, 68, 68, 0.1);padding:2px 4px;border-radius:4px;margin-right:5px;'>غير مدرجة</span>";
+                
                 cList.innerHTML += `
                 <div class="coin-list-item">
                   <div class="coin-list-info">
                     <img src="${logoSrc}" class="coin-logo" alt="${t.symbol}">
-                    <div><h4>${t.symbol}</h4><p>${b.toLocaleString('en-US')}</p></div>
+                    <div><h4>${t.symbol} ${listedBadge}</h4><p>${b.toLocaleString('en-US')}</p></div>
                   </div>
                 </div>`;
+                
                 txOptions.push({ value: t.symbol, text: `إرسال ${t.symbol}`, img: logoSrc });
             }
         });
@@ -775,7 +782,6 @@
           else await client.from("token_balances").insert([{ ola_id: to, symbol: curr, balance: amt }]);
       }
       
-      // نظام الخزنة الذكي: توجيه الأرباح لصندوق أرباح العملة بشكل مستقل وآمن
       if (curr !== 'OLA' && curr !== 'USDT') {
           let halfFee = feeInOla / 2;
           let vaultId = `PROFIT_${curr}`;
@@ -911,7 +917,6 @@
 
       st.textContent = "⏳ جاري التنفيذ وتوزيع الأرباح...";
 
-      // خصم الأرصدة وإضافتها
       if(fromCoin === 'USDT') currentUsdt -= amt; else if(fromCoin === 'OLA') currentBalance -= amt; else customTokens[fromCoin] -= amt;
       if(toCoin === 'USDT') currentUsdt += outAmount; else if(toCoin === 'OLA') currentBalance += outAmount; else customTokens[toCoin] = (customTokens[toCoin] || 0) + outAmount;
       currentBalance -= feeInOla;
@@ -920,7 +925,6 @@
       if(fromCoin !== 'USDT' && fromCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: fromCoin, balance: customTokens[fromCoin] }, { onConflict: 'ola_id,symbol' });
       if(toCoin !== 'USDT' && toCoin !== 'OLA') await client.from("token_balances").upsert({ ola_id: currentOla, symbol: toCoin, balance: customTokens[toCoin] }, { onConflict: 'ola_id,symbol' });
 
-      // نظام الخزنة الذكي: توجيه الأرباح للصناديق (1% لكل عملة تم التداول بها)
       let halfFee = feeInOla / 2;
       const addSmartProfit = async (sym) => {
           if (sym !== 'OLA' && sym !== 'USDT') {
@@ -936,7 +940,6 @@
       await addSmartProfit(fromCoin);
       await addSmartProfit(toCoin);
 
-      // تحديث مجمعات السيولة
       if(fromCoin === 'USDT' || toCoin === 'USDT') {
           let targetCoin = fromCoin === 'USDT' ? toCoin : fromCoin;
           if(targetCoin !== 'OLA' && calc.newUsdt !== null && calc.newCoin !== null) await client.from("coin_liquidity").update({ usdt_reserve: calc.newUsdt, coin_reserve: calc.newCoin }).eq("coin_symbol", targetCoin);
